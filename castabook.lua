@@ -214,7 +214,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 minetest.register_craftitem("ward:lorebook", {
-	description = ("Book of Knowledge"),
+	description = ("Book of Lore"),
 	inventory_image = "default_book.png",
 	stack_max = 1,
 	groups = { castabook=1, book=1 },
