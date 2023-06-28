@@ -602,3 +602,20 @@ function(player, wand, pointed_thing)
       ward_func.object_particlespawn_effect(target,thedef)
     end})
 end)
+
+for k,v in pairs(castables) do
+  minetest.register_craftitem("ward:learnbook_"..v, {
+    description = ("Book of Learn "..v),
+    inventory_image = "default_book.png",
+    stack_max = 1,
+    groups = { castabook=1, book=1 },
+    on_use = function(itemstack, user, pointed_thing)
+      if not ward_func.has_learned(user, v) then
+        minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
+        ward_func.learn(user, v)
+        itemstack:take_item()
+        return itemstack
+      end
+    end
+  })
+end
