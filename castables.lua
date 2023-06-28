@@ -603,7 +603,7 @@ function(player, wand, pointed_thing)
     end})
 end)
 
-for k,v in pairs(castables) do
+for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
     description = ("Book of Learn "..v),
     inventory_image = "default_book.png",
