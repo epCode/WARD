@@ -2,7 +2,7 @@
 
 local function calculate_max_mana(player)
   if minetest.deserialize(player:get_meta():get_string("castables")) then
-    return #minetest.deserialize(player:get_meta():get_string("castables")) * 6
+    return #minetest.deserialize(player:get_meta():get_string("castables")) * 3 + 25
   else
     return 0
   end
