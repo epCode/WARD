@@ -4,19 +4,22 @@ ward = {
   castables = {}, --a name list of all castables
   castabledescs = {}, --a list of all castables full description
   ferre_obj = {}, --player indexed objectref info for when the player casts adducere_ferre on a non player obj
+  manauseage = {}, --the amount of mana each castablename uses, castablename indexed
 }
 ward_func = {} --public functions
 
+ward_mana = {
+  hud = {},
+  mana = {},
+}
 
---[[TODO TODO
+dofile(minetest.get_modpath("ward").."/mana.lua")
 
 
-
-]]
 
 
 --Amount of time a castable can be held after combo pressed
-castableHOLDTIME = 2
+castableHOLDTIME = 3
 
 local castablecastablehud_hud = {}
 
@@ -47,12 +50,13 @@ local wand_on_use = function(itemstack, user, pointed_thing) -- what to do when 
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
   if user and user:is_player() and ward_func[castable[1]] and math.abs(castable[2] - minetest.get_gametime()) < castableHOLDTIME then
     ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
-    if ward_func.has_learned(user, castable[1]) then
+    if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
       ward_func[castable[1]](user, itemstack, pointed_thing)
       if user:is_player() and castablecastablehud_hud[user] then
         user:hud_remove(castablecastablehud_hud[user][1])
         castablecastablehud_hud[user] = nil
       end
+
       minetest.sound_play("ward_"..castable[1]..".ogg", {
         pos = user:get_pos(),
         max_hear_distance = 16,
@@ -367,8 +371,9 @@ local function show_castablecastablehud_hud(player, castablename)
   end
 end
 
-function ward_func.register_castable(castablename, combos, desc, func)
+function ward_func.register_castable(castablename, manauseage, combos, desc, func)
   ward.castabledescs[castablename] = desc
+  ward.manauseage[castablename] = manauseage
   table.insert(ward.castables, castablename)
   key_combos.register_key_combo(castablename, combos, function(player)
     if minetest.get_item_group(player:get_wielded_item():get_name(), "wand_power") ~= 0 then
@@ -399,6 +404,7 @@ function ward_func.set_teleport_hud(player, remove, ratiod)
     })
   end
 end
+
 
 
 minetest.register_globalstep(function(dtime)
