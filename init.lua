@@ -205,9 +205,29 @@ function ward_func.remove_protection(player) --remove protection effects on cert
   end
   player:get_meta():set_string("praesidium", "")
 end
+
+
 function ward_func.remove_to_pos(player) --remove protection effects on certain player
   player:get_meta():set_string("to_pos", "")
 end
+
+
+minetest.register_node("ward:light", {
+	drawtype = "airlike",
+	paramtype = "light",
+	sunlight_propagates = true,
+	--tiles = {"ward_empty.png"},
+	light_source = 10,
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{0,0,0,0,0,0}
+		}
+	},
+  walkable = false,
+	groups = {not_in_creative_inventory=1}
+})
+
 minetest.register_entity("ward:magic_entity", { -- castable entity
   textures = {"ward_star_thin.png"},
   _original_vel = vector.new(0,0,0),
@@ -228,6 +248,21 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
     end)
   end,
   on_step = function(self, dtime, moveresult)
+
+    local obvel = self.object:get_velocity()
+    if math.abs(obvel.x)+math.abs(obvel.x)+math.abs(obvel.x) < 0.1 then
+      self.object:remove()
+      return
+    end
+    local nopos = self.object:get_pos()
+    local node = minetest.get_node(nopos)
+    if node and node.name and node.name == "air" then
+      minetest.set_node(nopos,{name="ward:light"})
+      minetest.after(0.4, function()
+        minetest.remove_node(nopos)
+      end)
+    end
+
     if self._cast_on_caster and self._shooter then
       self._on_hit_object(self, self._shooter)
       self.object:remove()
@@ -322,9 +357,10 @@ function ward_func.send_blast(player, options)
     glow = 14,
 
   })
+
   blast:set_velocity(vector.multiply(player:get_look_dir(), options.speed+wand_power*2))
   blast:get_luaentity()._original_vel = blast:get_velocity()
-  blast:get_luaentity()._range_timer = options.range or 30
+  blast:get_luaentity()._range_timer = (options.range or 30) * (wand_power/5+1)
   blast:get_luaentity().hex_color = options.color or "#ffffff"
   blast:get_luaentity()._on_hit_object = options.on_hit_object
   blast:get_luaentity()._on_hit_node = options.on_hit_node
@@ -502,13 +538,14 @@ minetest.register_globalstep(function(dtime)
           local distance = vector.distance(pos, go_to_pos)
           playerphysics.add_physics_factor(player, "gravity", "ward:to_pos_pys", 0)
 
-          go_dir = vector.rotate_around_axis(vector.multiply(dir, 90) or vector.zero(), vector.new(0,1,0), player:get_look_horizontal()*-1)
+          local go_dir = vector.rotate_around_axis(vector.multiply(dir, 90) or vector.zero(), vector.new(0,1,0), player:get_look_horizontal()*-1)
+          go_dir = vector.multiply(go_dir, distance/5)
           dir = vector.multiply(dir, vector.new(2,1,2))
           player:add_velocity(vector.multiply(vel, -0.1))
           player:add_velocity(vector.multiply(dir, (to_pos[3]/7+0.3)*(distance/5))*(to_pos[3]/10))
 
           ward_func.object_particlespawn_effect(player, {
-            amount = 5,
+            amount = 4,
             time = 0.01,
             minsize = 2,
             maxsize = 4,
@@ -554,4 +591,13 @@ minetest.register_chatcommand("gspellme", {
     end
 		return false, "Invalid castable (see /help gspellme)"
 	end,
+})
+
+minetest.register_abm({
+	nodenames = {"ward:light"},
+	interval = 10,
+	chance = 1,
+	action = function(pos, node)
+		minetest.remove_node(pos)
+	end
 })

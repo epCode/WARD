@@ -156,6 +156,9 @@ ward_func.register_castable("avolare", 10, {{'sneak', 'down', 'up'}}, alldescs["
     if self._cast_on_caster then
       speed = 0.5
     end
+    if math.random(3) == 1 and target:is_player() then
+      target:get_meta():set_string("to_pos", "")
+    end
     local move_speed = vector.add(vector.multiply(self.object:get_velocity(), speed/2.2), vector.new(0,5*speed,0))
     ward_func.object_particlespawn_effect(target, {
       amount = 100,
@@ -436,6 +439,20 @@ if minetest.get_modpath("wielded_light") then
       if minetest.get_item_group(witem:get_name(), 'lit_wand') ~= 1 then
         witem:set_name(witem:get_name().."_lit")
         player:set_wielded_item(witem)
+        ward_func.object_particlespawn_effect(player, {
+          amount = 50,
+          time = 0.01,
+          minsize = 2,
+          maxsize = 4,
+          minexptime = 0.2,
+          maxexptime = 1,
+          texture = {
+            name = "ward_star.png^[colorize:#f6ff65:210^ward_star_core.png",
+            scale_tween = {1.3, 0.1},
+            blend = "screen",
+          }
+        })
+
       else
         witem:set_name(witem:get_name():sub(1, -5))
         player:set_wielded_item(witem)
