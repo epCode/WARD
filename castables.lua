@@ -102,14 +102,14 @@ local alldescs = {
     },
     "Sneak > ▼ > Sneak > ▲"
   },
-  ["Cogo"] = {{
+  ["cogo"] = {{
     "Pulls in all surrounding",
     "objects when the bolt",
     "hits the ground.",
     },
     "◀ > ▶ > ▼ > ▲"
   },
-  ["Luminum"] = {{
+  ["luminum"] = {{
     "Casts a bolt to place",
     "a torch from your",
     "inventory.",
@@ -147,12 +147,6 @@ ward_func.register_castable("exarmare", 6, {{'up', 'up'}}, alldescs["exarmare"],
         item:set_velocity(vector.multiply(target:get_look_dir(), 7))
       end
       witem:take_item()
-      target:set_wielded_item(witem)
-    else
-      target:punch((self._shooter or self.object), 1.0, {
-        full_punch_interval = 1.0,
-        damage_groups = {fleshy = wand_power/2},
-      }, self.object:get_velocity())
     end
   end})
 end)
@@ -291,6 +285,7 @@ end)
 minetest.register_on_dieplayer(function(player, reason)
   player:get_meta():set_string("to_pos", "")
   ward_func.remove_protection(player)
+  ward.affected_objects[player] = nil
 end)
 
 if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
@@ -717,22 +712,7 @@ function(player, wand, pointed_thing)
     end})
 end)
 
-for k,v in pairs(ward.castables) do
-  minetest.register_craftitem("ward:learnbook_"..v, {
-    description = ("Book of Learn "..v),
-    inventory_image = "default_book.png",
-    stack_max = 1,
-    groups = { castabook=1, book=1 },
-    on_use = function(itemstack, user, pointed_thing)
-      if not ward_func.has_learned(user, v) then
-        minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
-        ward_func.learn(user, v)
-        itemstack:take_item()
-        return itemstack
-      end
-    end
-  })
-end
+
 
 
 ward_func.register_castable("cogo", 25,
@@ -794,9 +774,44 @@ function(player, wand, pointed_thing)
   })
 end)
 
+
+
+
+
+ward_func.register_castable("afflicto", 30,
+{
+  {'up', 'right', 'aux1', 'left'},
+}, alldescs["afflicto"],
+function(player, wand, pointed_thing)
+  ward_func.send_blast(player, {
+    speed = 25,
+    range = 35,
+    color = "#830000",
+    wand = wand,
+    on_hit_object = function(self, target)
+      wand_power = minetest.get_item_group(wand:get_name(), "wand_power")
+      ward_func.add_persistant_effect({object = target, duration = wand_power/3+1.5, persistance = 7/wand_power, effect = function(target)
+        target:punch((self._shooter or self.object), 1.0, {
+          full_punch_interval = 1.0,
+          damage_groups = {fleshy = 1},
+        })
+      end})
+    end
+  })
+end)
+
+
+minetest.register_craft({
+	output = 'ward:learnbook_igneum_carmen',
+	recipe = {
+		{'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
+	},
+})
+
+
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
-    description = ("Book of Learn "..v:gsub("_", " ")),
+    description = ("Book of Learn "..v),
     inventory_image = "default_book.png",
     stack_max = 1,
     groups = { castabook=1, book=1 },
@@ -810,10 +825,3 @@ for k,v in pairs(ward.castables) do
     end
   })
 end
-
-minetest.register_craft({
-	output = 'ward:learnbook_igneum_carmen',
-	recipe = {
-		{'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
-	},
-})

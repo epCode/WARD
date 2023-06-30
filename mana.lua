@@ -18,7 +18,7 @@ function ward_func.set_mana(player, amount)
   local maxmana = calculate_max_mana(player)
   ward_mana.mana[player] = ward_mana.mana[player] or maxmana
   if ward_mana.mana[player] < maxmana then
-    ward_mana.mana[player] = ward_mana.mana[player] + 0.1
+    ward_mana.mana[player] = ward_mana.mana[player] + 1
     if ward_mana.mana[player] > maxmana then
       ward_mana.mana[player] = maxmana
     end

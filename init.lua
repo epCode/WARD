@@ -5,6 +5,7 @@ ward = {
   castabledescs = {}, --a list of all castables full description
   ferre_obj = {}, --player indexed objectref info for when the player casts adducere_ferre on a non player obj
   manauseage = {}, --the amount of mana each castablename uses, castablename indexed
+  affected_objects = {},
 }
 ward_func = {} --public functions
 
@@ -568,6 +569,20 @@ minetest.register_globalstep(function(dtime)
         end
       end
     end
+
+
+    for object,def in pairs(ward.affected_objects) do
+      if def.duration < minetest.get_gametime() then
+        ward.affected_objects[object] = nil
+      else
+        def.persistance[2] = def.persistance[2] + dtime
+        if def.persistance[2] > def.persistance[1] then
+          def.effect(object)
+          def.persistance[2] = 0
+        end
+      end
+    end
+
   end
 end)
 
@@ -603,3 +618,7 @@ minetest.register_abm({
 		minetest.remove_node(pos)
 	end
 })
+
+function ward_func.add_persistant_effect(def)
+  ward.affected_objects[def.object] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
+end
