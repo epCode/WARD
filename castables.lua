@@ -104,8 +104,15 @@ local alldescs = {
   },
   ["Cogo"] = {{
     "Pulls in all surrounding",
-    "objects when thebolt",
+    "objects when the bolt",
     "hits the ground.",
+    },
+    "◀ > ▶ > ▼ > ▲"
+  },
+  ["Luminum"] = {{
+    "Casts a bolt to place",
+    "a torch from your",
+    "inventory.",
     },
     "◀ > ▶ > ▼ > ▲"
   },
