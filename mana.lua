@@ -32,28 +32,28 @@ function ward_func.set_mana(player, amount)
     ward_mana.hud[player][1] = player:hud_add({
       hud_elem_type = "image",
       text = "ward_ui_mana.png",
-      position = {x = 0.97, y = 0.85},
+      position = {x = 0.97, y = 0.80},
       scale = {x = 0, y = 0},
       z_index = 1,
     })
     ward_mana.hud[player][2] = player:hud_add({
       hud_elem_type = "image",
       text = "ward_ui_mana.png^[colorize:#111111:255",
-      position = {x = 0.97, y = 0.86},
+      position = {x = 0.97, y = 0.81},
       scale = {x = 0, y = 0},
       z_index = 0,
     })
     ward_mana.hud[player][3] = player:hud_add({
       hud_elem_type = "text",
       text = "",
-      position = {x = 0.97, y = 0.88},
+      position = {x = 0.97, y = 0.83},
       scale = {x = 3, y = 3},
       z_index = 3,
     })
     ward_mana.hud[player][4] = player:hud_add({
       hud_elem_type = "image",
       text = "ward_ui_mana.png",
-      position = {x = 0.97, y = 0.9},
+      position = {x = 0.97, y = 0.85},
       scale = {x = 7, y = 7.5},
       z_index = 2,
     })
@@ -67,12 +67,14 @@ minetest.register_globalstep(function(dtime)
   end
 end)
 
-function ward_func.use_mana(player, amount)
+function ward_func.use_mana(player, amount, dont_use)
   ward_mana.mana[player] = ward_mana.mana[player] or 0
   if amount > ward_mana.mana[player] then
     return false
   else
-    ward_mana.mana[player] = ward_mana.mana[player] - amount
+    if not dont_use then
+      ward_mana.mana[player] = ward_mana.mana[player] - amount
+    end
     return true
   end
 end

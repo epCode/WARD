@@ -19,7 +19,7 @@ dofile(minetest.get_modpath("ward").."/mana.lua")
 
 
 --Amount of time a castable can be held after combo pressed
-castableHOLDTIME = 3
+castableHOLDTIME = 2
 
 local castablecastablehud_hud = {}
 
@@ -48,9 +48,9 @@ end
 
 local wand_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a wand
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
-  if user and user:is_player() and ward_func[castable[1]] and math.abs(castable[2] - minetest.get_gametime()) < castableHOLDTIME then
-    ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
+  if user and user:is_player() and ward_func[castable[1]] and castable[2] > minetest.get_gametime() then
     if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
+      ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
       ward_func[castable[1]](user, itemstack, pointed_thing)
       if user:is_player() and castablecastablehud_hud[user] then
         user:hud_remove(castablecastablehud_hud[user][1])
@@ -347,27 +347,28 @@ end)
 
 local function show_castablecastablehud_hud(player, castablename)
   if not ward_func.has_learned(player, castablename) then return end
-  if player:is_player() and castablecastablehud_hud[player] then
+  local effect = ""
+  if not ward_func.use_mana(player, ward.manauseage[castablename] or 30, true) then
+    effect = "^ward_not_enough_mana.png"
+  end
+  if castablecastablehud_hud[player] and ward.castable_combo_pressed_timer[player:get_player_name()][2] < minetest.get_gametime() then
+    ward.castable_combo_pressed_timer[player:get_player_name()] = {"", 0}
     player:hud_remove(castablecastablehud_hud[player][1])
     castablecastablehud_hud[player] = nil
+    return
+  elseif castablecastablehud_hud[player] then
+    player:hud_change(castablecastablehud_hud[player][1], "text", "ward_"..castablename..".png"..effect)
+    return
   end
   if not castablecastablehud_hud[player] then
     local random_int = math.random(1000)
     castablecastablehud_hud[player] = {player:hud_add({
       hud_elem_type = "image",
-      text = "ward_"..castablename..".png",
-      position = {x = 0.5, y = 0.3},
+      text = "ward_"..castablename..".png"..effect,
+      position = {x = 0.97, y = 0.90},
       scale = {x = 4, y = 4},
-      offset = {x = 0, y = -178},
       z_index = 100,
     }), random_int}
-    local tbt = castablecastablehud_hud[player][1]
-    minetest.after(castableHOLDTIME, function()
-      if player:is_player() and castablecastablehud_hud[player] and castablecastablehud_hud[player][2] == random_int and castablecastablehud_hud[player][1] == tbt then
-        player:hud_remove(castablecastablehud_hud[player][1])
-        castablecastablehud_hud[player] = nil
-      end
-    end)
   end
 end
 
@@ -377,8 +378,7 @@ function ward_func.register_castable(castablename, manauseage, combos, desc, fun
   table.insert(ward.castables, castablename)
   key_combos.register_key_combo(castablename, combos, function(player)
     if minetest.get_item_group(player:get_wielded_item():get_name(), "wand_power") ~= 0 then
-    	ward.castable_combo_pressed_timer[player:get_player_name()] = {castablename, minetest.get_gametime()}
-      show_castablecastablehud_hud(player, castablename)
+    	ward.castable_combo_pressed_timer[player:get_player_name()] = {castablename, minetest.get_gametime() + castableHOLDTIME}
     end
   end)
   ward_func[castablename] = func
@@ -410,6 +410,12 @@ end
 minetest.register_globalstep(function(dtime)
 	for _,player in pairs(minetest.get_connected_players()) do
     local meta = player:get_meta()
+    local witem = player:get_wielded_item()
+    local name = player:get_player_name()
+    if minetest.get_item_group(witem:get_name(), "wand_power") ~= 0 and ward.castable_combo_pressed_timer[name] then
+
+      show_castablecastablehud_hud(player, ward.castable_combo_pressed_timer[name][1])
+    end
     if meta:get_string("to_pos") == '' then
       playerphysics.remove_physics_factor(player, "gravity", "ward:to_pos_pys")
     end
@@ -432,7 +438,7 @@ minetest.register_globalstep(function(dtime)
     if meta:get_string("praesidium") ~= "" and minetest.deserialize(meta:get_string("praesidium"))[2] < minetest.get_gametime() then
       ward_func.remove_protection(player)
     end
-    if player:get_player_control().RMB and string.find(player:get_wielded_item():get_name(), "ward") and string.find(player:get_wielded_item():get_name(), "wand") then
+    if player:get_player_control().RMB and string.find(witem:get_name(), "ward") and string.find(witem:get_name(), "wand") then
       playerphysics.add_physics_factor(player, "jump", "ward:wand_pys", 0)
       playerphysics.add_physics_factor(player, "speed", "ward:wand_pys", 0.3)
     else
@@ -442,7 +448,7 @@ minetest.register_globalstep(function(dtime)
     local to_pos = meta:get_string("to_pos")
 
     local ferre_obj = ward.ferre_obj[player] -- This code block checks if a specific object exists and meets certain conditions before computing and updating its movement velocity towards a target position while dampening its velocity over time.
-    if ferre_obj and ferre_obj[1]:get_velocity() and ferre_obj[2] > minetest.get_gametime() and minetest.get_item_group(player:get_wielded_item():get_name(), "wand_power") ~= 0 then
+    if ferre_obj and ferre_obj[1]:get_velocity() and ferre_obj[2] > minetest.get_gametime() and minetest.get_item_group(witem:get_name(), "wand_power") ~= 0 then
       local obcol = ferre_obj[1]:get_properties().collisionbox or ferre_obj[1]:get_luaentity().collision_box or ferre_obj[1]:get_luaentity().collisionbox or {0.5, 0.5, 0.5, 0.5, 0.5, 0.5}
       local object_volume = math.abs(obcol[1]) + math.abs(obcol[2]) + math.abs(obcol[3]) + math.abs(obcol[4]) + math.abs(obcol[5]) + math.abs(obcol[6])
       local go_to_this_pos = player:get_pos() + vector.new(0, 1.3, 0) + player:get_look_dir() * 2
