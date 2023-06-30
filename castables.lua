@@ -620,7 +620,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields) --
         if not player or player and not player:get_velocity() then return end
         local tpstuff3 = minetest.deserialize(player:get_meta():get_string("teleporting"))
         tpstuff3 = tpstuff3[3] or 0
-        local possible_spots = minetest.find_nodes_in_area_under_air(vector.add(tpos, vector.new(-3, -3, -3)), vector.add(tpos, vector.new(7, 7, 7)), {"group:cracky", "group:crumbly", "group:oddly_breakable_by_hand", "group:choppy", "group:snappy", "group:pickaxey", "group:handy", "group:shovely", "group:axey", "group:swordy"})
+        local possible_spots = minetest.find_nodes_in_area_under_air(vector.add(tpos, vector.new(-0, -3, -0)), vector.add(tpos, vector.new(7, 7, 7)), {"group:cracky", "group:crumbly", "group:oddly_breakable_by_hand", "group:choppy", "group:snappy", "group:pickaxey", "group:handy", "group:shovely", "group:axey", "group:swordy"})
         possible_spots = possible_spots[1] or nil
         if possible_spots then
           tpos = possible_spots
