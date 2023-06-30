@@ -409,7 +409,6 @@ local function set_occasu_portarum(player, tspots, formspec_extra, ts) -- to set
     table.insert(pos_tostringtspots, k)
   end
   local fullspots = false
-  minetest.chat_send_all(#pos_tostringtspots)
   if #pos_tostringtspots and #pos_tostringtspots > 2 then
     fullspots = true
   end
