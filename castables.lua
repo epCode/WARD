@@ -401,17 +401,30 @@ local function set_occasu_portarum(player, tspots, formspec_extra, ts) -- to set
     --table.insert(pos_tostringtspots, minetest.pos_to_string(v, 0))
     table.insert(pos_tostringtspots, k)
   end
+  local fullspots = false
+  minetest.chat_send_all(#pos_tostringtspots)
+  if #pos_tostringtspots and #pos_tostringtspots > 2 then
+    fullspots = true
+  end
   local string_poss = ""
   if #pos_tostringtspots > 0 then
     string_poss = table.concat(pos_tostringtspots, ":"):gsub(",", ' | ')
     string_poss = string_poss:gsub(":", ',')
   end
-  local thebutton = "image_button_exit[2.25,10.55;3.4,1.2;ward_button.png;learn_button_pos;Confirm name]"
+  local thebutton = "image_button[2.25,10.55;3.4,1.2;ward_button_learnfull.png;learn_button_pos_full;Full]"
   if not ts then
     if not formspec_extra then
       formspec_extra = ""
     end
-    thebutton = "image_button[2.25,10.55;3.4,1.2;ward_button.png;learn_button;Learn Position]"
+  end
+  if not fullspots then
+    thebutton = "image_button_exit[2.25,10.55;3.4,1.2;ward_button.png;learn_button_pos;Confirm name]"
+    if not ts then
+      if not formspec_extra then
+        formspec_extra = ""
+      end
+      thebutton = "image_button[2.25,10.55;3.4,1.2;ward_button.png;learn_button;Learn Position]"
+    end
   end
   local formspec =
     "formspec_version[4]"..
@@ -485,7 +498,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields) --
     elseif fields['learn_button_pos'] then
       player_spots[fields['textarea']] = pos
       player:get_meta():set_string("ward_tspots", minetest.serialize(player_spots))
-      minetest.chat_send_all(player:get_meta():get_string("ward_tspots"))
     elseif fields["tspots"] then
       local formspec2 =
         "image[2.25,9.68;3.4,0.6;ward_black.png]"..
