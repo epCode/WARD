@@ -102,6 +102,13 @@ local alldescs = {
     },
     "Sneak > ▼ > Sneak > ▲"
   },
+  ["Cogo"] = {{
+    "Pulls in all surrounding",
+    "objects when thebolt",
+    "hits the ground.",
+    },
+    "◀ > ▶ > ▼ > ▲"
+  },
 }
 
 
@@ -593,7 +600,7 @@ function(player, wand, pointed_thing)
   ward_func.send_blast(player, {
     speed = 25,
     range = 25,
-    color = "#16ff31",
+    color = "#111111",
     wand = wand,
     on_hit_object = function(self, target)
       local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
@@ -629,6 +636,45 @@ function(player, wand, pointed_thing)
       thedef.texture.name = "ward_smoke_anim.png^[colorize:#5a5a5a:255"
       ward_func.object_particlespawn_effect(target,thedef)
     end})
+end)
+
+for k,v in pairs(ward.castables) do
+  minetest.register_craftitem("ward:learnbook_"..v, {
+    description = ("Book of Learn "..v),
+    inventory_image = "default_book.png",
+    stack_max = 1,
+    groups = { castabook=1, book=1 },
+    on_use = function(itemstack, user, pointed_thing)
+      if not ward_func.has_learned(user, v) then
+        minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
+        ward_func.learn(user, v)
+        itemstack:take_item()
+        return itemstack
+      end
+    end
+  })
+end
+
+
+ward_func.register_castable("cogo", 25,
+{
+  {'left', 'right', 'down', 'up'},
+}, alldescs["cogo"],
+function(player, wand, pointed_thing)
+  ward_func.send_blast(player, {
+    speed = 25,
+    range = 25,
+    color = "#9999ff",
+    wand = wand,
+    on_hit_node = function(self, under, above)
+      wand_power = minetest.get_item_group(wand:get_name(), "wand_power")
+      local pos1 = vector.add(under, vector.new(wand_power/1.5,wand_power/1.5,wand_power/1.5))
+      local pos2 = vector.add(under, vector.new(-wand_power/1.5,-wand_power/1.5,-wand_power/1.5))
+      for _,obj in ipairs(minetest.get_objects_in_area(pos1, pos2)) do
+        obj:add_velocity(vector.multiply(vector.direction(obj:get_pos(), under), wand_power*1.5+3))
+      end
+    end
+  })
 end)
 
 for k,v in pairs(ward.castables) do
