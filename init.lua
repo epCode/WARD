@@ -173,8 +173,8 @@ function ward_func.object_particlespawn_effect(player, def)
     maxpos = {x=collbox[4]+def.posize+thispos.x, y=collbox[5]+def.posize+thispos.y, z=collbox[6]+def.posize+thispos.z},
     minvel = def.minvel or {x=-0.2, y=-0.2, z=-0.2},
     maxvel = def.maxvel or {x=0.2, y=0.2, z=0.2},
-    minacc = {x=0, y=def.minacc.y or 0, z=0},
-    maxacc = {x=0, y=def.maxacc.y or 0, z=0},
+    minacc = def.minacc or vector.zero(),
+    maxacc = def.maxacc or vector.zero(),
     minexptime = def.minexptime or 0.1,
     maxexptime = def.maxexptime or 0.2,
     minsize = def.minsize or 0.1,
@@ -502,9 +502,30 @@ minetest.register_globalstep(function(dtime)
           local distance = vector.distance(pos, go_to_pos)
           playerphysics.add_physics_factor(player, "gravity", "ward:to_pos_pys", 0)
 
+          go_dir = vector.rotate_around_axis(vector.multiply(dir, 90) or vector.zero(), vector.new(0,1,0), player:get_look_horizontal()*-1)
           dir = vector.multiply(dir, vector.new(2,1,2))
           player:add_velocity(vector.multiply(vel, -0.1))
           player:add_velocity(vector.multiply(dir, (to_pos[3]/7+0.3)*(distance/5))*(to_pos[3]/10))
+
+          ward_func.object_particlespawn_effect(player, {
+            amount = 5,
+            time = 0.01,
+            minsize = 2,
+            maxsize = 4,
+            minexptime = 0.2,
+            maxexptime = 1,
+            minacc = go_dir,
+            maxacc = vector.multiply(go_dir, 0.7),
+            --minvel = vector.new(0,-2,0),
+            --maxvel = vector.new(0,-200,0),
+
+            texture = {
+              name = "ward_star.png^[colorize:#a3ce63:210^ward_star_core.png",
+              scale_tween = {1.3, 0.1},
+              blend = "screen",
+            }
+          })
+
         end
       end
     end

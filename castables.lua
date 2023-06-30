@@ -116,6 +116,23 @@ local alldescs = {
 ward_func.register_castable("exarmare", 6, {{'up', 'up'}}, alldescs["exarmare"], function(player, wand)
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
   ward_func.send_blast(player, {speed = 25, range = 25, color = "#16ff31", wand = wand, on_hit_object = function(self, target)
+    ward_func.object_particlespawn_effect(target, {
+      amount = 100,
+      time = 0.01,
+      minsize = 2,
+      maxsize = 4,
+      minexptime = 0.2,
+      maxexptime = 0.7,
+      minacc = vector.new(0,1,0),
+      maxacc = vector.new(0,7,0),
+      minvel = vector.new(1,1,1),
+      maxvel = vector.new(-1,-0.2,-1),
+      texture = {
+        name = "ward_star.png^[colorize:"..self.hex_color..":210^ward_star_core.png",
+        scale_tween = {1.3, 0.1},
+        blend = "screen",
+      }
+    })
     if target:is_player() and math.random(20/wand_power) < 4 then
       witem = target:get_wielded_item()
       local item = minetest.add_item(vector.add(target:get_pos(), vector.new(0,1.3,0)), witem)
@@ -182,11 +199,32 @@ end)
 ward_func.register_castable("adducere", 22, {{'sneak', 'down', 'down'}}, alldescs["adducere"], function(player, wand)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
+
   ward_func.send_blast(player, {speed = 25, range = 35, color = "#63f9ff", wand = wand, on_hit_object = function(self, target)
+    local go_dir = vector.direction(target:get_pos(), player:get_pos())
+    go_dir = vector.rotate_around_axis(vector.multiply(go_dir, 90) or vector.zero(), vector.new(0,1,0), (target:get_look_horizontal() or target:get_yaw())*-1)
+    ward_func.object_particlespawn_effect(target, {
+      amount = 100,
+      time = 0.1,
+      minsize = 2,
+      maxsize = 4,
+      minexptime = 0.2,
+      maxexptime = 1,
+      minacc = go_dir,
+      maxacc = vector.multiply(go_dir, 0.7),
+
+      minvel = vector.new(0,0,0),
+      maxvel = vector.new(-0,-0,-0),
+      texture = {
+        name = "ward_star.png^[colorize:"..self.hex_color..":210^ward_star_core.png",
+        scale_tween = {1.3, 0.1},
+        blend = "screen",
+      }
+    })
     if target:is_player() then
       target:get_meta():set_string("to_pos", minetest.serialize({vector.add(player:get_pos(), vector.multiply(player:get_look_dir(), 3)), minetest.get_gametime()+wand_power/2, wand_power}))
     else
-      target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), wand_power/3+7))
+      target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), wand_power*2))
     end
   end})
 end)
@@ -194,6 +232,24 @@ end)
 ward_func.register_castable("deprimere", 15, {{'sneak', 'aux1'}}, alldescs["deprimere"], function(player, wand)
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
   ward_func.send_blast(player, {speed = 25, range = 35, color = "#be4d0a", wand = wand, on_hit_object = function(self, target)
+    ward_func.object_particlespawn_effect(target, {
+      amount = 100,
+      time = 0.1,
+      minsize = 2,
+      maxsize = 4,
+      minexptime = 0.2,
+      maxexptime = 1,
+      --minacc = go_dir,
+      --maxacc = vector.multiply(go_dir, 0.7),
+      minvel = vector.new(0,-2,0),
+      maxvel = vector.new(0,-200,0),
+
+      texture = {
+        name = "ward_star.png^[colorize:"..self.hex_color..":210^ward_star_core.png",
+        scale_tween = {1.3, 0.1},
+        blend = "screen",
+      }
+    })
     target:add_velocity(vector.new(0,-(wand_power/2+10),0))
   end})
 end)
@@ -270,14 +326,14 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
         on_hit_object = function(self, target)
 
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/3),
+            time = 1*(wand_power/2),
             minacc = vector.new(0,2,0),
             maxacc = vector.new(0,2,0),
             minvel = vector.new(0.2,1,0.2),
             maxvel = vector.new(-0.2,-0.2,-0.2),
             posize = 0.2,
 
-            amount = 150*(wand_power/3),
+            amount = 150*(wand_power/2),
             minsize = 0,
             maxsize = 10,
             minexptime = 0.2,
@@ -296,13 +352,13 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             }
           })
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/3),
+            time = 1*(wand_power/2),
             minacc = vector.new(0,1,0),
             maxacc = vector.new(0,4,0),
             minvel = vector.new(0.3,0.3,0.3),
             maxvel = vector.new(-0.3,-0.2,-0.3),
 
-            amount = 100*(wand_power/3*(wand_power/3)),
+            amount = 100*(wand_power/2*(wand_power/2)),
             minsize = 3,
             maxsize = 5,
             minexptime = 0.2,
@@ -321,13 +377,13 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             }
           })
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/3),
+            time = 1*(wand_power/2),
             minacc = vector.new(0,1,0),
             maxacc = vector.new(0,4,0),
             minvel = vector.new(0.1,1,0.1),
             maxvel = vector.new(-0.1,-0.2,-0.1),
 
-            amount = 30*(wand_power/3),
+            amount = 30*(wand_power/2),
             minsize = 3,
             maxsize = 7,
             minexptime = 0.2,
@@ -352,11 +408,11 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
       			damage_groups = {fleshy = wand_power/2},
       		}, self.object:get_velocity())
           if minetest.get_modpath("fire_plus") and target:is_player() then
-            fire_plus.burn_player(target, wand_power/2, 2)
+            fire_plus.burn_player(target, wand_power, 2)
             self.object:remove()
             return
           elseif minetest.get_modpath("mcl_burning") then
-            mcl_burning.set_on_fire(target, wand_power/2)
+            mcl_burning.set_on_fire(target, wand_power)
             self.object:remove()
             return
           end
