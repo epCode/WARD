@@ -446,6 +446,10 @@ function ward_func.set_teleport_hud(player, remove, ratiod)
   end
 end
 
+function ward_func.damage_obj(obj, amount, hitter)
+  
+end
+
 
 
 minetest.register_globalstep(function(dtime)

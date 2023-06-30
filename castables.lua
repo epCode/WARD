@@ -142,7 +142,7 @@ ward_func.register_castable("exarmare", 6, {{'up', 'up'}}, alldescs["exarmare"],
       witem:take_item()
       target:set_wielded_item(witem)
     else
-      target:punch(self.object, 1.0, {
+      target:punch((self._shooter or self.object), 1.0, {
         full_punch_interval = 1.0,
         damage_groups = {fleshy = wand_power/2},
       }, self.object:get_velocity())
@@ -406,9 +406,9 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             }
           })
           local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-          target:punch(self.object, 1.0, {
+          target:punch((self._shooter or self.object), 1.0, {
       			full_punch_interval = 1.0,
-      			damage_groups = {fleshy = wand_power/2},
+      			damage_groups = {fleshy = wand_power},
       		}, self.object:get_velocity())
           if minetest.get_modpath("fire_plus") and target:is_player() then
             fire_plus.burn_player(target, wand_power, 2)
