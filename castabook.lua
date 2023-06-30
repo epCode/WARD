@@ -1,7 +1,4 @@
-ward_ui = {
-  theselectedcastable = {},
-  book_of_knowledge_page = {},
-}
+
 
 book_of_knowledge = {
   [==[
@@ -129,7 +126,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
     if fields['castables'] and book_castables_table and book_castables and #book_castables > 0 then
       castable_index = fields['castables']:sub(5,-1)
-      print(book_castables[tonumber(castable_index)])
       theselectedcastable = book_castables[tonumber(castable_index)]:gsub(" ", "_")
       local castabledescs = ""
       for _,vv in pairs(ward.castabledescs[theselectedcastable][1]) do

@@ -491,6 +491,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields) --
     for k,v in pairs(player_spots) do
       table.insert(numindexed, v)
     end
+    local numindexed_names = {}
+    for k,v in pairs(player_spots) do
+      table.insert(numindexed_names, k)
+    end
     if fields['learn_button'] then
       local formspec2 =
         "textarea[2.5,9.8;3,0.6;textarea;   Position Name;]"
@@ -500,9 +504,21 @@ minetest.register_on_player_receive_fields(function(player, formname, fields) --
       player:get_meta():set_string("ward_tspots", minetest.serialize(player_spots))
     elseif fields["tspots"] then
       local formspec2 =
+        "image_button[2.25,11.9;2.3,0.7;ward_button.png;delete_pos;Delete Pos]"..
         "image[2.25,9.68;3.4,0.6;ward_black.png]"..
         "label[2.4,10;"..minetest.pos_to_string(numindexed[tonumber(fields['tspots']:sub(5,-1))], 0).."]"
+
+      theselectedthing = tonumber(fields['tspots']:sub(5,-1))
+      ward_ui.theselectedcastable[player:get_player_name()] = numindexed_names[theselectedthing]
       set_occasu_portarum(player, player_spots, formspec2)
+    elseif fields["delete_pos"] then
+      local selected_thing = ward_ui.theselectedcastable[player:get_player_name()]
+      if selected_thing then
+        player_spots[selected_thing] = nil
+        set_occasu_portarum(player, player_spots)
+      end
+
+      player:get_meta():set_string("ward_tspots", minetest.serialize(player_spots))
     end
   elseif formname == "ward:portarum" then
     local pos = player:get_pos()

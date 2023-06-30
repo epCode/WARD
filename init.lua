@@ -13,6 +13,11 @@ ward_mana = {
   mana = {},
 }
 
+ward_ui = {
+  theselectedcastable = {},
+  book_of_knowledge_page = {},
+}
+
 dofile(minetest.get_modpath("ward").."/mana.lua")
 
 
@@ -48,7 +53,7 @@ end
 
 local wand_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a wand
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
-  if user and user:is_player() and ward_func[castable[1]] and castable[2] > minetest.get_gametime() then
+  if user and user:is_player() and ward_func[castable[1]] then
     if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
       ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
       ward_func[castable[1]](user, itemstack, pointed_thing)
