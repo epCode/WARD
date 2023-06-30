@@ -749,9 +749,47 @@ function(player, wand, pointed_thing)
   })
 end)
 
+local function take_torch(player)
+	local inv = player:get_inventory()
+	local torch_stack, torch_stack_id
+	for i=1, inv:get_size("main") do
+		local it = inv:get_stack("main", i)
+		if not it:is_empty() and minetest.get_item_group(it:get_name(), "torch") ~= 0 then
+			torch_stack = it
+			torch_stack_id = i
+			break
+		end
+	end
+  if torch_stack then
+    torch_stack:take_item()
+    inv:set_stack("main", torch_stack_id, torch_stack)
+  end
+	return torch_stack, torch_stack_id
+end
+
+ward_func.register_castable("luminum", 8,
+{
+  {'left', 'aux1', 'right'},
+}, alldescs["luminum"],
+function(player, wand, pointed_thing)
+  local torchitem, id = take_torch(player)
+  if not torchitem then return end
+  ward_func.send_blast(player, {
+    speed = 10,
+    range = 35,
+    color = "#ddba34",
+    wand = wand,
+    on_hit_node = function(self, under, above)
+      if minetest.registered_nodes[torchitem:get_name()] then
+        minetest.place_node(above, {name=torchitem:get_name()})
+      end
+    end
+  })
+end)
+
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
-    description = ("Book of Learn "..v),
+    description = ("Book of Learn "..v:gsub("_", " ")),
     inventory_image = "default_book.png",
     stack_max = 1,
     groups = { castabook=1, book=1 },
@@ -765,3 +803,10 @@ for k,v in pairs(ward.castables) do
     end
   })
 end
+
+minetest.register_craft({
+	output = 'ward:learnbook_igneum_carmen',
+	recipe = {
+		{'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
+	},
+})
