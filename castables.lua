@@ -191,15 +191,6 @@ for k,v in pairs(ward.castables) do
   })
 end
 
-minetest.register_craftitem("ward:damage_stone", {
-  description = ("A Stone of Damage"),
-  inventory_image = "ward_stone_1.png^[screen:#550000^[contrast:100:-50",
-  stack_max = 4,
-  on_use = function(itemstack, user, pointed_thing)
-    --ward_func.compatible_explode(user:get_pos())
-  end
-})
-
 
 local function spawn_book_entity(pos, respawn) -- ripped from mcl2
 	if respawn then
@@ -273,20 +264,3 @@ for k,v in pairs(ward.castables) do
   	end
   })
 end
-
-
-
-minetest.register_craft({
-  output = 'ward:learnbook_igneum_carmen',
-  recipe = {
-    {'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
-  },
-})
-
-
-minetest.register_craft({
-  output = 'ward:learnbook_afflicto',
-  recipe = {
-    {'ward:learnbook_deprimere', 'ward:learnbook_exarmare', 'ward:damage_stone'},
-  },
-})
