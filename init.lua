@@ -22,6 +22,8 @@ ward_ui = {
   book_of_knowledge_page = {},
 }
 
+dofile(minetest.get_modpath("ward").."/craftitems.lua")
+dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
 dofile(minetest.get_modpath("ward").."/mana.lua")
 
 
