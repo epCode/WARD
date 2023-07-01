@@ -270,7 +270,7 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
       end)
     end
 
-    if self._cast_on_caster and self._shooter then
+    if self._cast_on_caster and self._shooter and self._on_hit_object then
       self._on_hit_object(self, self._shooter)
       self.object:remove()
       return
