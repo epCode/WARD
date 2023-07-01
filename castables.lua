@@ -298,7 +298,7 @@ end, 5)
 
 minetest.register_on_dieplayer(function(player, reason)
   if reason.object and reason.object:is_player() then
-    if math.random(1) == 1 then
+    if math.random(6) == 1 then
       minetest.add_item(vector.add(player:get_pos(), vector.new(0,1.3,0)), ItemStack("ward:damage_stone"))
       minetest.chat_send_player(reason.object:get_player_name(), "Your anger towards the slain man conjures a "..minetest.colorize("#3333ff", "special").." object")
     end
