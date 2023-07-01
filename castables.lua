@@ -177,7 +177,7 @@ end)
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
     description = ("Book of Learn "..v),
-    inventory_image = "ward_"..ward.castable_class[v].."_series_learnbook.png",
+    inventory_image = "ward_"..ward.castable_class[v].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
     stack_max = 1,
     groups = { castabook=1, book=1 },
     on_use = function(itemstack, user, pointed_thing)

@@ -53,7 +53,7 @@ book_of_knowledge = {
   combonation of controls to activate the
   castable, once you do this you must wave
   it in the direction you wish the bolt, or
-  whatever is produced to be cast.]==]
+  whatever is produced, to be cast.]==]
 }
 
 local function get_keys(t)
