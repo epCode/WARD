@@ -38,16 +38,26 @@ minetest.register_entity("ward:learn_book_entity", {
   on_rightclick = function(self,clicker)
     if not clicker:is_player() then return end
     local castable_name = minetest.get_meta(self.object:get_pos()):get_string("castable")
-    if ward_func.has_learned(clicker, castable_name) then
-      minetest.chat_send_player(clicker:get_player_name(), minetest.colorize("#e9d700",castable_name).." is already farmiliar to you.")
-      return
-    end
+
     self.object:set_animation({x=1, y=10}, 20, 0, false)
     minetest.remove_node(self.object:get_pos())
     self._going = true
+    if ward_func.has_learned(clicker, castable_name) then
+      minetest.after(1, function()
+        if self and self.object and self.object:get_velocity() then
+          minetest.add_item(vector.add(self.object:get_pos(), vector.new(0,0,0)), ItemStack("ward:learnbook_"..castable_name))
+          minetest.chat_send_player(clicker:get_player_name(), "You have found a book entitled "..minetest.colorize("#e9d700",castable_name)..".")
+          self.object:remove()
+          return
+        end
+      end)
+    end
     minetest.after(2, function()
       if self and self.object and self.object:get_velocity() then
         self.object:remove()
+
+
+
         ward_func.object_particlespawn_effect(clicker, {
           amount = 100,
           time = 0.01,

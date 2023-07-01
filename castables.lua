@@ -297,6 +297,12 @@ ward_func.register_castable("tollere", 17, {{'sneak', 'jump', 'left', 'right'}, 
 end, 5)
 
 minetest.register_on_dieplayer(function(player, reason)
+  if reason.object and reason.object:is_player() then
+    if math.random(1) == 1 then
+      minetest.add_item(vector.add(player:get_pos(), vector.new(0,1.3,0)), ItemStack("ward:damage_stone"))
+      minetest.chat_send_player(reason.object:get_player_name(), "Your anger towards the slain man conjures a "..minetest.colorize("#3333ff", "special").." object")
+    end
+  end
   player:get_meta():set_string("to_pos", "")
   ward_func.remove_protection(player)
   ward.affected_objects[player] = nil
@@ -888,6 +894,16 @@ for k,v in pairs(ward.castables) do
   })
 end
 
+minetest.register_craftitem("ward:damage_stone", {
+  description = ("A Stone of Damage"),
+  inventory_image = "ward_stone_1.png^[screen:#550000^[contrast:100:-50",
+  stack_max = 4,
+  on_use = function(itemstack, user, pointed_thing)
+    --ward_func.compatible_explode(user:get_pos())
+  end
+})
+
+
 local function spawn_book_entity(pos, respawn) -- ripped from mcl2
 	if respawn then
 		-- Check if we already have a book
@@ -973,5 +989,13 @@ minetest.register_craft({
   output = 'ward:learnbook_igneum_carmen',
   recipe = {
     {'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
+  },
+})
+
+
+minetest.register_craft({
+  output = 'ward:learnbook_afflicto',
+  recipe = {
+    {'ward:learnbook_deprimere', 'ward:learnbook_exarmare', 'ward:damage_stone'},
   },
 })
