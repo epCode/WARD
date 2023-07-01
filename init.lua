@@ -8,6 +8,7 @@ ward = {
   affected_objects = {},
   findable_castables = {},
   selfcastablescastables = {},
+  castable_class = {},
 }
 ward_func = {} --public functions
 
@@ -420,7 +421,8 @@ local function show_castablecastablehud_hud(player, castablename)
   end
 end
 
-function ward_func.register_castable(castablename, manauseage, combos, desc, func, finable, notcastableonself)
+function ward_func.register_castable(castablename, castable_class, manauseage, combos, desc, func, finable, notcastableonself)
+  ward.castable_class[castablename] = castable_class
   ward.castabledescs[castablename] = desc
   ward.manauseage[castablename] = manauseage
   if not notcastableonself then
