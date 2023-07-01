@@ -6,6 +6,8 @@ ward = {
   ferre_obj = {}, --player indexed objectref info for when the player casts adducere_ferre on a non player obj
   manauseage = {}, --the amount of mana each castablename uses, castablename indexed
   affected_objects = {},
+  findable_castables = {},
+  selfcastablescastables = {},
 }
 ward_func = {} --public functions
 
@@ -165,13 +167,17 @@ function ward_func.object_particlespawn_effect(player, def)
   if player and not player:is_player() and player:get_luaentity() then
     collbox = player:get_properties().collisionbox
   end
+  if not def.extra_posmax then
+    def.extra_posmax = vector.new(0,0,0)
+    def.extra_posmin = vector.new(0,0,0)
+  end
   def.minacc = def.minacc or vector.zero()
   def.maxacc = def.maxacc or vector.zero()
   return minetest.add_particlespawner({
     amount = def.amount or 6000,
     time = def.time or 20,
-    minpos = {x=collbox[1]-def.posize+thispos.x, y=collbox[2]-def.posize+thispos.y, z=collbox[3]-def.posize+thispos.z},
-    maxpos = {x=collbox[4]+def.posize+thispos.x, y=collbox[5]+def.posize+thispos.y, z=collbox[6]+def.posize+thispos.z},
+    minpos = {x=collbox[1]-def.posize+thispos.x+(def.extra_posmin.x or 0), y=collbox[2]-def.posize+thispos.y+(def.extra_posmin.y or 0), z=collbox[3]-def.posize+thispos.z+(def.extra_posmin.z or 0)},
+    maxpos = {x=collbox[4]+def.posize+thispos.x+(def.extra_posmax.x or 0), y=collbox[5]+def.posize+thispos.y+(def.extra_posmax.y or 0), z=collbox[6]+def.posize+thispos.z+(def.extra_posmax.z or 0)},
     minvel = def.minvel or {x=-0.2, y=-0.2, z=-0.2},
     maxvel = def.maxvel or {x=0.2, y=0.2, z=0.2},
     minacc = def.minacc or vector.zero(),
@@ -331,7 +337,7 @@ function ward_func.send_blast(player, options)
   local wand_power = minetest.get_item_group(options.wand:get_name(), 'wand_power')
   local eye_pos = vector.add(player:get_pos(), vector.add(vector.new(0,player:get_properties().eye_height,0), vector.multiply(player:get_look_dir(), 0.2)))
   local blast = minetest.add_entity(eye_pos, "ward:magic_entity")
-  if player:get_player_control().RMB and not player:get_player_control().LMB then
+  if player:get_player_control().RMB and not player:get_player_control().LMB and ward.selfcastablescastables[options.castablename] then
     blast:get_luaentity()._cast_on_caster = true
   end
   blast:get_luaentity()._particles = minetest.add_particlespawner({
@@ -414,9 +420,17 @@ local function show_castablecastablehud_hud(player, castablename)
   end
 end
 
-function ward_func.register_castable(castablename, manauseage, combos, desc, func)
+function ward_func.register_castable(castablename, manauseage, combos, desc, func, finable, notcastableonself)
   ward.castabledescs[castablename] = desc
   ward.manauseage[castablename] = manauseage
+  if not notcastableonself then
+    ward.selfcastablescastables[castablename] = true
+  end
+  if finable then
+    for i=1, finable do
+      table.insert(ward.findable_castables, castablename)
+    end
+  end
   table.insert(ward.castables, castablename)
   key_combos.register_key_combo(castablename, combos, function(player)
     if minetest.get_item_group(player:get_wielded_item():get_name(), "wand_power") ~= 0 then
@@ -586,6 +600,7 @@ minetest.register_globalstep(function(dtime)
   end
 end)
 
+dofile(minetest.get_modpath("ward").."/learn_station_generation.lua")
 dofile(minetest.get_modpath("ward").."/castables.lua")
 dofile(minetest.get_modpath("ward").."/castabook.lua")
 

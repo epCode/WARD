@@ -136,7 +136,7 @@ local alldescs = {
 
 ward_func.register_castable("exarmare", 6, {{'up', 'up'}}, alldescs["exarmare"], function(player, wand)
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {speed = 25, range = 25, color = "#16ff31", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", wand = wand, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
       amount = 100,
       time = 0.01,
@@ -163,10 +163,10 @@ ward_func.register_castable("exarmare", 6, {{'up', 'up'}}, alldescs["exarmare"],
       witem:take_item()
     end
   end})
-end)
+end, 10, true)
 
 ward_func.register_castable("avolare", 10, {{'sneak', 'down', 'up'}}, alldescs["avolare"], function(player, wand)
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#ff1616", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast(player, {castablename = "avolare", speed = 25, range = 35, color = "#ff1616", wand = wand, on_hit_object = function(self, target)
     local speed = 0.8
     if self._cast_on_caster then
       speed = 0.5
@@ -194,7 +194,7 @@ ward_func.register_castable("avolare", 10, {{'sneak', 'down', 'up'}}, alldescs["
     })
     target:add_velocity(move_speed)
   end})
-end)
+end, 6)
 
 
 ward_func.register_castable("praesidium", 40, {{'left', 'aux1', 'up'}}, alldescs["praesidium"], function(player, wand)
@@ -212,13 +212,13 @@ ward_func.register_castable("praesidium", 40, {{'left', 'aux1', 'up'}}, alldescs
     },
   })
   player:get_meta():set_string("praesidium", minetest.serialize({particles, minetest.get_gametime()+2+(wand_power/2)}))
-end)
+end, 1)
 
 ward_func.register_castable("adducere", 22, {{'sneak', 'down', 'down'}}, alldescs["adducere"], function(player, wand)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
 
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#63f9ff", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast( player, {castablename = "adducere", speed = 25, range = 35, color = "#63f9ff", wand = wand, on_hit_object = function(self, target)
     local go_dir = vector.direction(target:get_pos(), player:get_pos())
     go_dir = vector.rotate_around_axis(vector.multiply(go_dir, 90) or vector.zero(), vector.new(0,1,0), (target:get_look_horizontal() or target:get_yaw())*-1)
     ward_func.object_particlespawn_effect(target, {
@@ -245,11 +245,11 @@ ward_func.register_castable("adducere", 22, {{'sneak', 'down', 'down'}}, alldesc
       target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), wand_power*2))
     end
   end})
-end)
+end, 2)
 
 ward_func.register_castable("deprimere", 15, {{'sneak', 'aux1'}}, alldescs["deprimere"], function(player, wand)
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#be4d0a", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast( player, {castablename = "deprimere", speed = 25, range = 35, color = "#be4d0a", wand = wand, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
       amount = 100,
       time = 0.1,
@@ -270,12 +270,12 @@ ward_func.register_castable("deprimere", 15, {{'sneak', 'aux1'}}, alldescs["depr
     })
     target:add_velocity(vector.new(0,-(wand_power/2+10),0))
   end})
-end)
+end, 20)
 
 ward_func.register_castable("adducere_ferre", 35, {{'sneak', 'down', 'left', 'right'}, {'sneak', 'down', 'right', 'left'}}, alldescs["adducere_ferre"], function(player, wand)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#a3ce63", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast( player, {castablename = "adducere_ferre", speed = 25, range = 35, color = "#a3ce63", wand = wand, on_hit_object = function(self, target)
     if target:is_player() then
       target:get_meta():set_string("to_pos", minetest.serialize({{"player", player:get_player_name()}, minetest.get_gametime()+wand_power/2, wand_power}))
     else
@@ -287,14 +287,14 @@ end)
 ward_func.register_castable("tollere", 17, {{'sneak', 'jump', 'left', 'right'}, {'sneak', 'jump', 'right', 'left'}}, alldescs["tollere"], function(player, wand)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast(player, {castablename = "tollere", speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
     if target:is_player() then
       target:get_meta():set_string("to_pos", minetest.serialize({vector.add(target:get_pos(), vector.new(0,3,0)), minetest.get_gametime()+wand_power/2, wand_power}))
     else
       target:set_velocity(vector.new(0,wand_power/3+7,0))
     end
   end})
-end)
+end, 5)
 
 minetest.register_on_dieplayer(function(player, reason)
   player:get_meta():set_string("to_pos", "")
@@ -315,7 +315,7 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
     function(player, wand, pointed_thing)
       local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
 
-      local deff = {
+      local deff = {castablename = "igneum_carmen",
         speed = 25,
         range = 35,
         color = "#ff420f",
@@ -441,7 +441,7 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
       ward_func.send_blast(player, deff)
       deff.color = "#feff37"
       ward_func.send_blast(player, deff)
-    end)
+    end, 1)
 end
 
 if minetest.get_modpath("wielded_light") then
@@ -473,7 +473,7 @@ if minetest.get_modpath("wielded_light") then
         witem:set_name(witem:get_name():sub(1, -5))
         player:set_wielded_item(witem)
       end
-    end)
+    end, 15)
 end
 
 ward_func.register_castable("delustro", 8,
@@ -481,7 +481,7 @@ ward_func.register_castable("delustro", 8,
   {'sneak', 'left', 'up', 'right'},
 }, alldescs["delustro"],
 function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast(player, {castablename = "delustro", speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
     if target:is_player() then
       target:get_meta():set_string("to_pos", "")
       ward_func.remove_protection(target)
@@ -489,7 +489,7 @@ function(player, wand, pointed_thing)
       target:set_velocity(vector.new(0,wand_power/3+7,0))
     end
   end})
-end)
+end, 25)
 
 local function set_occasu_portarum(player, tspots, formspec_extra, ts) -- to set teleport
   pos_tostringtspots = {}
@@ -685,7 +685,7 @@ ward_func.register_castable("obscurum", 25,
   {'sneak', 'down', 'sneak', 'up'},
 }, alldescs["obscurum"],
 function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {
+  ward_func.send_blast(player, {castablename = "obscurum",
     speed = 25,
     range = 25,
     color = "#111111",
@@ -724,7 +724,7 @@ function(player, wand, pointed_thing)
       thedef.texture.name = "ward_smoke_anim.png^[colorize:#5a5a5a:255"
       ward_func.object_particlespawn_effect(target,thedef)
     end})
-end)
+end, 36)
 
 
 
@@ -734,7 +734,7 @@ ward_func.register_castable("cogo", 25,
   {'left', 'right', 'down', 'up'},
 }, alldescs["cogo"],
 function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {
+  ward_func.send_blast(player, {castablename = "cogo",
     speed = 25,
     range = 25,
     color = "#9999ff",
@@ -748,7 +748,7 @@ function(player, wand, pointed_thing)
       end
     end
   })
-end)
+end, 6)
 
 local function take_torch(player)
 	local inv = player:get_inventory()
@@ -775,7 +775,7 @@ ward_func.register_castable("luminum", 8,
 function(player, wand, pointed_thing)
   local torchitem, id = take_torch(player)
   if not torchitem then return end
-  ward_func.send_blast(player, {
+  ward_func.send_blast(player, {castablename = "luminum",
     speed = 10,
     range = 35,
     color = "#ddba34",
@@ -786,7 +786,7 @@ function(player, wand, pointed_thing)
       end
     end
   })
-end)
+end, 12)
 
 
 
@@ -797,7 +797,7 @@ ward_func.register_castable("afflicto", 30,
   {'up', 'right', 'aux1', 'left'},
 }, alldescs["afflicto"],
 function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {
+  ward_func.send_blast(player, {castablename = "afflicto",
     speed = 25,
     range = 35,
     color = "#830000",
@@ -838,7 +838,7 @@ ward_func.register_castable("regenero", 30,
   {'left', 'down', 'right', 'left', 'down', 'right'},
 }, alldescs["regenero"],
 function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {
+  ward_func.send_blast(player, {castablename = "regenero",
     speed = 25,
     range = 35,
     color = "#00834a",
@@ -870,13 +870,6 @@ function(player, wand, pointed_thing)
 end)
 
 
-minetest.register_craft({
-	output = 'ward:learnbook_igneum_carmen',
-	recipe = {
-		{'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
-	},
-})
-
 
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
@@ -894,3 +887,91 @@ for k,v in pairs(ward.castables) do
     end
   })
 end
+
+local function spawn_book_entity(pos, respawn) -- ripped from mcl2
+	if respawn then
+		-- Check if we already have a book
+		local objs = minetest.get_objects_inside_radius(pos, 1)
+		for o=1, #objs do
+			local obj = objs[o]
+			local lua = obj:get_luaentity()
+			if lua and lua.name == "ward:learn_book_entity" then
+				if lua._learnpoolpos and vector.equals(pos, lua._learnpoolpos) then
+					return
+				end
+			end
+		end
+	end
+	local obj = minetest.add_entity(vector.add(pos, vector.new(0,0,0)), "ward:learn_book_entity")
+	if obj then
+		local lua = obj:get_luaentity()
+		if lua then
+			lua._learnpoolpos = table.copy(pos)
+		end
+	end
+end
+
+
+for k,v in pairs(ward.castables) do
+  minetest.register_node("ward:learn_"..v, {
+  	drawtype = "airlike",
+  	paramtype = "light",
+  	sunlight_propagates = true,
+  	--tiles = {"ward_empty.png"},
+  	light_source = 10,
+  	selection_box = {
+  		type = "fixed",
+  		fixed = {
+  			{0,0,0,0,0,0}
+  		}
+  	},
+    walkable = false,
+  	groups = {not_in_creative_inventory=1}
+  })
+
+  minetest.register_abm({
+  	nodenames = {"ward:learn_"..v},
+  	interval = 1,
+  	chance = 1,
+  	action = function(pos, node)
+      spawn_book_entity(pos, true)
+      ward_func.object_particlespawn_effect(pos, {
+        time = 1,
+        minacc = vector.new(0,2,0),
+        maxacc = vector.new(0,7,0),
+        minvel = vector.new(0.1,0.1,0.1),
+        maxvel = vector.new(-0.1,-0.1,-0.1),
+        extra_posmin = vector.new(-0.1,0.1,-0.1),
+        extra_posmax = vector.new(0.1,-1.3,0.1),
+
+        amount = 500,
+        minsize = 0.2,
+        maxsize = 3,
+        minexptime = 0.2,
+        maxexptime = 0.5,
+        glow = 14,
+        texture = {
+          name = "ward_star.png^[colorize:#"..math.random(100000, 999999)..":210^ward_star_core.png",
+          alpha_tween = {1,0.1},
+          scale_tween = {1, 0.01},
+          blend = "screen",
+        },
+      })
+  	end
+  })
+end
+
+
+
+
+
+
+
+
+
+minetest.register_craft({
+  output = 'ward:learnbook_igneum_carmen',
+  recipe = {
+    {'ward:basic_wand_8', 'ward:learnbook_luminum', 'ward:learnbook_afflicto'},
+  },
+})
