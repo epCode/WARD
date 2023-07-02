@@ -1,8 +1,8 @@
 local castable_class = "neutral"
 
-ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, wand)
-  local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", wand = wand, on_hit_object = function(self, target)
+ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, fire_stick)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+  ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", fire_stick = fire_stick, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
       amount = 100,
       time = 0.01,
@@ -20,7 +20,7 @@ ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward
         blend = "screen",
       }
     })
-    if target:is_player() and math.random(20/wand_power) < 4 then
+    if target:is_player() and math.random(20/fire_stick_power) < 4 then
       witem = target:get_wielded_item()
       local item = minetest.add_item(vector.add(target:get_pos(), vector.new(0,1.3,0)), witem)
       if item then
@@ -32,8 +32,8 @@ ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward
 end, 10, true)
 
 
-ward_func.register_castable("avolare", castable_class, 10, {{'sneak', 'down', 'up'}}, ward.alldescs["avolare"], function(player, wand)
-  ward_func.send_blast(player, {castablename = "avolare", speed = 25, range = 35, color = "#ff1616", wand = wand, on_hit_object = function(self, target)
+ward_func.register_castable("avolare", castable_class, 10, {{'sneak', 'down', 'up'}}, ward.alldescs["avolare"], function(player, fire_stick)
+  ward_func.send_blast(player, {castablename = "avolare", speed = 25, range = 35, color = "#ff1616", fire_stick = fire_stick, on_hit_object = function(self, target)
     local speed = 0.8
     if self._cast_on_caster then
       speed = 0.5
@@ -64,11 +64,11 @@ ward_func.register_castable("avolare", castable_class, 10, {{'sneak', 'down', 'u
 end, 6)
 
 
-ward_func.register_castable("adducere", castable_class, 22, {{'sneak', 'down', 'down'}}, ward.alldescs["adducere"], function(player, wand)
+ward_func.register_castable("adducere", castable_class, 22, {{'sneak', 'down', 'down'}}, ward.alldescs["adducere"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
-  local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
 
-  ward_func.send_blast( player, {castablename = "adducere", speed = 25, range = 35, color = "#63f9ff", wand = wand, on_hit_object = function(self, target)
+  ward_func.send_blast( player, {castablename = "adducere", speed = 25, range = 35, color = "#63f9ff", fire_stick = fire_stick, on_hit_object = function(self, target)
     local go_dir = vector.direction(target:get_pos(), player:get_pos())
     go_dir = vector.rotate_around_axis(vector.multiply(go_dir, 90) or vector.zero(), vector.new(0,1,0), (target:get_look_horizontal() or target:get_yaw())*-1)
     ward_func.object_particlespawn_effect(target, {
@@ -90,34 +90,34 @@ ward_func.register_castable("adducere", castable_class, 22, {{'sneak', 'down', '
       }
     })
     if target:is_player() then
-      target:get_meta():set_string("to_pos", minetest.serialize({vector.add(player:get_pos(), vector.multiply(player:get_look_dir(), 3)), minetest.get_gametime()+wand_power/2, wand_power}))
+      target:get_meta():set_string("to_pos", minetest.serialize({vector.add(player:get_pos(), vector.multiply(player:get_look_dir(), 3)), minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
-      target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), wand_power*2))
+      target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), fire_stick_power*2))
     end
   end})
 end, 2)
 
 
-ward_func.register_castable("adducere_ferre", castable_class, 35, {{'sneak', 'down', 'left', 'right'}, {'sneak', 'down', 'right', 'left'}}, ward.alldescs["adducere_ferre"], function(player, wand)
+ward_func.register_castable("adducere_ferre", castable_class, 35, {{'sneak', 'down', 'left', 'right'}, {'sneak', 'down', 'right', 'left'}}, ward.alldescs["adducere_ferre"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
-  local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast( player, {castablename = "adducere_ferre", speed = 25, range = 35, color = "#a3ce63", wand = wand, on_hit_object = function(self, target)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+  ward_func.send_blast( player, {castablename = "adducere_ferre", speed = 25, range = 35, color = "#a3ce63", fire_stick = fire_stick, on_hit_object = function(self, target)
     if target:is_player() then
-      target:get_meta():set_string("to_pos", minetest.serialize({{"player", player:get_player_name()}, minetest.get_gametime()+wand_power/2, wand_power}))
+      target:get_meta():set_string("to_pos", minetest.serialize({{"player", player:get_player_name()}, minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
-      ward.ferre_obj[player] = {target, minetest.get_gametime()+wand_power/2}
+      ward.ferre_obj[player] = {target, minetest.get_gametime()+fire_stick_power/2}
     end
   end})
 end)
 
-ward_func.register_castable("tollere", castable_class, 17, {{'sneak', 'jump', 'left', 'right'}, {'sneak', 'jump', 'right', 'left'}}, ward.alldescs["tollere"], function(player, wand)
+ward_func.register_castable("tollere", castable_class, 17, {{'sneak', 'jump', 'left', 'right'}, {'sneak', 'jump', 'right', 'left'}}, ward.alldescs["tollere"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
-  local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast(player, {castablename = "tollere", speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+  ward_func.send_blast(player, {castablename = "tollere", speed = 25, range = 35, color = "#ffffff", fire_stick = fire_stick, on_hit_object = function(self, target)
     if target:is_player() then
-      target:get_meta():set_string("to_pos", minetest.serialize({vector.add(target:get_pos(), vector.new(0,3,0)), minetest.get_gametime()+wand_power/2, wand_power}))
+      target:get_meta():set_string("to_pos", minetest.serialize({vector.add(target:get_pos(), vector.new(0,3,0)), minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
-      target:set_velocity(vector.new(0,wand_power/3+7,0))
+      target:set_velocity(vector.new(0,fire_stick_power/3+7,0))
     end
   end})
 end, 5)
@@ -129,9 +129,9 @@ if minetest.get_modpath("wielded_light") then
     {
     {'aux1', 'aux1'},
     }, ward.alldescs["lux"],
-    function(player, wand, pointed_thing)
+    function(player, fire_stick, pointed_thing)
       witem = player:get_wielded_item()
-      if minetest.get_item_group(witem:get_name(), 'lit_wand') ~= 1 then
+      if minetest.get_item_group(witem:get_name(), 'lit_fire_stick') ~= 1 then
         witem:set_name(witem:get_name().."_lit")
         player:set_wielded_item(witem)
         ward_func.object_particlespawn_effect(player, {
@@ -159,13 +159,13 @@ ward_func.register_castable("delustro", castable_class, 8,
 {
   {'sneak', 'left', 'up', 'right'},
 }, ward.alldescs["delustro"],
-function(player, wand, pointed_thing)
-  ward_func.send_blast(player, {castablename = "delustro", speed = 25, range = 35, color = "#ffffff", wand = wand, on_hit_object = function(self, target)
+function(player, fire_stick, pointed_thing)
+  ward_func.send_blast(player, {castablename = "delustro", speed = 25, range = 35, color = "#ffffff", fire_stick = fire_stick, on_hit_object = function(self, target)
     if target:is_player() then
       target:get_meta():set_string("to_pos", "")
       ward_func.remove_protection(target)
     else
-      target:set_velocity(vector.new(0,wand_power/3+7,0))
+      target:set_velocity(vector.new(0,fire_stick_power/3+7,0))
     end
   end})
 end, 25)
@@ -234,7 +234,7 @@ ward_func.register_castable("portarum", castable_class, 50,
 {
   {'up', 'right', 'down', 'left', 'aux1', 'down'},
 }, ward.alldescs["portarum"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   local player_spots = minetest.deserialize(player:get_meta():get_string("ward_tspots"))
   if not player_spots then
     player_spots = {}
@@ -246,7 +246,7 @@ ward_func.register_castable("occasu_portarum", castable_class, 30,
 {
   {'up', 'right', 'down', 'left', 'aux1', 'sneak'},
 }, ward.alldescs["occasu_portarum"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   local player_spots = minetest.deserialize(player:get_meta():get_string("ward_tspots"))
   if not player_spots then
     player_spots = {}
@@ -362,18 +362,18 @@ ward_func.register_castable("cogo", castable_class, 25,
 {
   {'left', 'right', 'down', 'up'},
 }, ward.alldescs["cogo"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   ward_func.send_blast(player, {castablename = "cogo",
     speed = 25,
     range = 25,
     color = "#9999ff",
-    wand = wand,
+    fire_stick = fire_stick,
     on_hit_node = function(self, under, above)
-      wand_power = minetest.get_item_group(wand:get_name(), "wand_power")
-      local pos1 = vector.add(under, vector.new(wand_power/1.5,wand_power/1.5,wand_power/1.5))
-      local pos2 = vector.add(under, vector.new(-wand_power/1.5,-wand_power/1.5,-wand_power/1.5))
+      fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
+      local pos1 = vector.add(under, vector.new(fire_stick_power/1.5,fire_stick_power/1.5,fire_stick_power/1.5))
+      local pos2 = vector.add(under, vector.new(-fire_stick_power/1.5,-fire_stick_power/1.5,-fire_stick_power/1.5))
       for _,obj in ipairs(minetest.get_objects_in_area(pos1, pos2)) do
-        obj:add_velocity(vector.multiply(vector.direction(obj:get_pos(), under), wand_power*1.5+3))
+        obj:add_velocity(vector.multiply(vector.direction(obj:get_pos(), under), fire_stick_power*1.5+3))
       end
     end
   })
@@ -401,14 +401,14 @@ ward_func.register_castable("luminum", castable_class, 8,
 {
   {'left', 'aux1', 'right'},
 }, ward.alldescs["luminum"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   local torchitem, id = take_torch(player)
   if not torchitem then return end
   ward_func.send_blast(player, {castablename = "luminum",
     speed = 10,
     range = 35,
     color = "#ddba34",
-    wand = wand,
+    fire_stick = fire_stick,
     on_hit_node = function(self, under, above)
       if minetest.registered_nodes[torchitem:get_name()] then
         minetest.place_node(above, {name=torchitem:get_name()})

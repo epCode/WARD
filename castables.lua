@@ -4,7 +4,7 @@ ward.alldescs = {
     "(flings away thier wield",
     "item). Fail chance is",
     "80%. This decreases",
-    "with wand power.",},
+    "with fire stick power.",},
     "▲ > ▲"
   },
   ["avolare"] = {{
@@ -12,7 +12,7 @@ ward.alldescs = {
     "while damaging them a",
     "small bit. It increases",
     "speed and damage",
-    "with wand power.",},
+    "with fire stick power.",},
     "Sneak > ▼ > ▲"
   },
   ["praesidium"] = {{
@@ -20,13 +20,13 @@ ward.alldescs = {
     "ield around caster for",
     "blocking attacks. Fail",
     "and duration decreases",
-    "with wand power.",},
+    "with fire stick power.",},
     "◀ > Use > ▲"
   },
   ["adducere"] = {{
     "Pulls the target towards",
     "the caster. Speed incr-",
-    "eases with wand power.",
+    "eases with power.",
     "Pull can be broken by",
     "target if praesidium is",
     "cast."},
@@ -36,7 +36,7 @@ ward.alldescs = {
     "Carries the target in",
     "front of the caster.",
     "duration and speed.",
-    "increase with wand",
+    "increase with",
     "power. tip:(RMB+LMB)"},
     "Sneak > ▼ > (◀ + ▶)"
   },
@@ -61,13 +61,13 @@ ward.alldescs = {
     "sets them on fire. if",
     " a node is hit, fire is",
     "created in increasing",
-    "size with wand power.",},
+    "size with power.",},
     "(◀ + ▲ + ▶) > ▼ > Sneak"
   },
   ["lux"] = {{
-    "Creates a light from the",
-    "casters wand, lighting",
-    "up thier surroundings.",
+    "makes the fire stick",
+    "a wielded light.",
+    "",
     "",
     "",},
     "Use + Use"

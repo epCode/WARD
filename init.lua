@@ -1,6 +1,6 @@
 ward = {
   castable_combo_pressed_timer = {}, --recorded time when a castable combo was pressed (player indexed)
-  wands = {}, --a name list of all wands
+  fire_sticks = {}, --a name list of all fire_sticks
   castables = {}, --a name list of all castables
   castabledescs = {}, --a list of all castables full description
   ferre_obj = {}, --player indexed objectref info for when the player casts adducere_ferre on a non player obj
@@ -22,8 +22,6 @@ ward_ui = {
   book_of_knowledge_page = {},
 }
 
-dofile(minetest.get_modpath("ward").."/craftitems.lua")
-dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
 dofile(minetest.get_modpath("ward").."/mana.lua")
 
 
@@ -57,7 +55,7 @@ function ward_func.learn(player, castable) -- give the player the ability to wie
   player:get_meta():set_string("castables", minetest.serialize(castable_list))
 end
 
-local wand_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a wand
+local fire_stick_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a fire_stick
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
   if user and user:is_player() and ward_func[castable[1]] then
     if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
@@ -77,43 +75,43 @@ local wand_on_use = function(itemstack, user, pointed_thing) -- what to do when 
   end
 end
 
-function ward.register_wand(name, def) -- creates a new wand
+function ward.register_fire_stick(name, def) -- creates a new fire_stick
   minetest.register_tool(name, def)
-  ward.wands[name] = def
+  ward.fire_sticks[name] = def
 end
 for i=1, 15 do
-  ward.register_wand("ward:basic_wand_"..i, {
-    description = "Power "..i,
-    inventory_image = "ward_dark_oak.png",
-    on_use = wand_on_use,
-    on_secondary_use = wand_on_use,
+  ward.register_fire_stick("ward:basic_wand_"..i, {
+    description = "Fire Stick\n "..minetest.colorize("#4a0000", "Power"..i),
+    inventory_image = "ward_dark_oak.png^fire_stick_overlay.png",
+    on_use = fire_stick_on_use,
+    on_secondary_use = fire_stick_on_use,
     range = 0,
-    groups = {wand_power=i}
+    groups = {fire_stick_power=i}
   })
 end
 --[[
-ward.register_wand("ward:intermediate_wand", {
+ward.register_fire_stick("ward:intermediate_fire_stick", {
   description = "Intermediate",
   inventory_image = "ward_dark_oak.png",
-  on_use = wand_on_use,
-  on_secondary_use = wand_on_use,
+  on_use = fire_stick_on_use,
+  on_secondary_use = fire_stick_on_use,
   range = 0,
-  groups = {wand_power=10}
+  groups = {fire_stick_power=10}
 })]]
 --[[
-ward.register_wand("ward:elder_wand", { -- admin wand
+ward.register_fire_stick("ward:elder_fire_stick", { -- admin fire_stick
   description = "Advanced",
   inventory_image = "ward_elder.png",
-  on_use = wand_on_use,
-  on_secondary_use = wand_on_use,
+  on_use = fire_stick_on_use,
+  on_secondary_use = fire_stick_on_use,
   range = 0,
-  groups = {wand_power=20}
+  groups = {fire_stick_power=20}
 })]]
 
 if minetest.get_modpath("wielded_light") then -- for light castable
-  for k,v in pairs(ward.wands) do
+  for k,v in pairs(ward.fire_sticks) do
     deff=table.copy(v)
-    deff.groups.lit_wand = 1
+    deff.groups.lit_fire_stick = 1
     deff.groups.not_in_creative_inventory = 1
     deff.inventory_image = deff.inventory_image.."^ward_lux_add.png"
     minetest.register_tool(k.."_lit", deff)
@@ -295,7 +293,7 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
         if not (not hitpoint.ref:is_player() and hitpoint.ref:get_luaentity() and hitpoint.ref:get_luaentity()._is_magic) then
           if hitpoint.ref:is_player() and hitpoint.ref:get_meta():get_string("praesidium") == "" or not hitpoint.ref:is_player() then
 
-            if hitpoint.ref:is_player() and hitpoint.ref:get_player_control().RMB and math.random(5) ~= 1 and minetest.get_item_group(hitpoint.ref:get_wielded_item():get_name(), "wand_power") ~= 0 then
+            if hitpoint.ref:is_player() and hitpoint.ref:get_player_control().RMB and math.random(5) ~= 1 and minetest.get_item_group(hitpoint.ref:get_wielded_item():get_name(), "fire_stick_power") ~= 0 then
               minetest.chat_send_all(hitpoint.ref:get_player_name().." BLOCKED "..self._shooter:get_player_name().."'s shot!!")
               blast_explode(self.object:get_pos(), "#ffffff", 3, 0.3)
               self.object:remove()
@@ -337,7 +335,7 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
 
 
 function ward_func.send_blast(player, options)
-  local wand_power = minetest.get_item_group(options.wand:get_name(), 'wand_power')
+  local fire_stick_power = minetest.get_item_group(options.fire_stick:get_name(), 'fire_stick_power')
   local eye_pos = vector.add(player:get_pos(), vector.add(vector.new(0,player:get_properties().eye_height,0), vector.multiply(player:get_look_dir(), 0.2)))
   local blast = minetest.add_entity(eye_pos, "ward:magic_entity")
   if player:get_player_control().RMB and not player:get_player_control().LMB and ward.selfcastablescastables[options.castablename] then
@@ -368,14 +366,14 @@ function ward_func.send_blast(player, options)
 
   })
 
-  blast:set_velocity(vector.multiply(player:get_look_dir(), options.speed+wand_power*2))
+  blast:set_velocity(vector.multiply(player:get_look_dir(), options.speed+fire_stick_power*2))
   blast:get_luaentity()._original_vel = blast:get_velocity()
-  blast:get_luaentity()._range_timer = (options.range or 30) * (wand_power/5+1)
+  blast:get_luaentity()._range_timer = (options.range or 30) * (fire_stick_power/5+1)
   blast:get_luaentity().hex_color = options.color or "#ffffff"
   blast:get_luaentity()._on_hit_object = options.on_hit_object
   blast:get_luaentity()._on_hit_node = options.on_hit_node
   blast:get_luaentity()._shooter = player
-  blast:add_velocity(vector.new(dtrandom(-0.4*(wand_power-20), 0.4*(wand_power-20)),dtrandom(-0.4*(wand_power-20), 0.4*math.abs(wand_power-20)),dtrandom(-0.4*(wand_power-20), 0.4*(wand_power-20))))
+  blast:add_velocity(vector.new(dtrandom(-0.4*(fire_stick_power-20), 0.4*(fire_stick_power-20)),dtrandom(-0.4*(fire_stick_power-20), 0.4*math.abs(fire_stick_power-20)),dtrandom(-0.4*(fire_stick_power-20), 0.4*(fire_stick_power-20))))
 end
 
 function ward.learn_castable(player, castable)
@@ -437,7 +435,7 @@ function ward_func.register_castable(castablename, castable_class, manauseage, c
   end
   table.insert(ward.castables, castablename)
   key_combos.register_key_combo(castablename, combos, function(player)
-    if minetest.get_item_group(player:get_wielded_item():get_name(), "wand_power") ~= 0 then
+    if minetest.get_item_group(player:get_wielded_item():get_name(), "fire_stick_power") ~= 0 then
     	ward.castable_combo_pressed_timer[player:get_player_name()] = {castablename, minetest.get_gametime() + castableHOLDTIME}
     end
   end)
@@ -474,7 +472,7 @@ minetest.register_globalstep(function(dtime)
     local meta = player:get_meta()
     local witem = player:get_wielded_item()
     local name = player:get_player_name()
-    if minetest.get_item_group(witem:get_name(), "wand_power") ~= 0 and ward.castable_combo_pressed_timer[name] then
+    if minetest.get_item_group(witem:get_name(), "fire_stick_power") ~= 0 and ward.castable_combo_pressed_timer[name] then
 
       show_castablecastablehud_hud(player, ward.castable_combo_pressed_timer[name][1])
     end
@@ -500,17 +498,17 @@ minetest.register_globalstep(function(dtime)
     if meta:get_string("praesidium") ~= "" and minetest.deserialize(meta:get_string("praesidium"))[2] < minetest.get_gametime() then
       ward_func.remove_protection(player)
     end
-    if player:get_player_control().RMB and string.find(witem:get_name(), "ward") and string.find(witem:get_name(), "wand") then
-      playerphysics.add_physics_factor(player, "jump", "ward:wand_pys", 0)
-      playerphysics.add_physics_factor(player, "speed", "ward:wand_pys", 0.3)
+    if player:get_player_control().RMB and string.find(witem:get_name(), "ward") and string.find(witem:get_name(), "fire_stick") then
+      playerphysics.add_physics_factor(player, "jump", "ward:fire_stick_pys", 0)
+      playerphysics.add_physics_factor(player, "speed", "ward:fire_stick_pys", 0.3)
     else
-      playerphysics.remove_physics_factor(player, "jump", "ward:wand_pys")
-      playerphysics.remove_physics_factor(player, "speed", "ward:wand_pys")
+      playerphysics.remove_physics_factor(player, "jump", "ward:fire_stick_pys")
+      playerphysics.remove_physics_factor(player, "speed", "ward:fire_stick_pys")
     end
     local to_pos = meta:get_string("to_pos")
 
     local ferre_obj = ward.ferre_obj[player] -- This code block checks if a specific object exists and meets certain conditions before computing and updating its movement velocity towards a target position while dampening its velocity over time.
-    if ferre_obj and ferre_obj[1]:get_velocity() and ferre_obj[2] > minetest.get_gametime() and minetest.get_item_group(witem:get_name(), "wand_power") ~= 0 then
+    if ferre_obj and ferre_obj[1]:get_velocity() and ferre_obj[2] > minetest.get_gametime() and minetest.get_item_group(witem:get_name(), "fire_stick_power") ~= 0 then
       local obcol = ferre_obj[1]:get_properties().collisionbox or ferre_obj[1]:get_luaentity().collision_box or ferre_obj[1]:get_luaentity().collisionbox or {0.5, 0.5, 0.5, 0.5, 0.5, 0.5}
       local object_volume = math.abs(obcol[1]) + math.abs(obcol[2]) + math.abs(obcol[3]) + math.abs(obcol[4]) + math.abs(obcol[5]) + math.abs(obcol[6])
       local go_to_this_pos = player:get_pos() + vector.new(0, 1.3, 0) + player:get_look_dir() * 2
@@ -535,7 +533,7 @@ minetest.register_globalstep(function(dtime)
           if to_pos[1][1] == "player" and minetest.get_player_by_name(to_pos[1][2]) then
             local the_player = minetest.get_player_by_name(to_pos[1][2])
             if the_player:get_velocity() and the_player:get_pos() then
-              if minetest.get_item_group(the_player:get_wielded_item():get_name(), "wand_power") == 0 then
+              if minetest.get_item_group(the_player:get_wielded_item():get_name(), "fire_stick_power") == 0 then
                 ward_func.remove_to_pos(player)
                 is_to_pos = false
               end

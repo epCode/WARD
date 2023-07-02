@@ -4,15 +4,15 @@ ward_func.register_castable("afflicto", castable_class, 30,
 {
   {'up', 'right', 'aux1', 'left'},
 }, ward.alldescs["afflicto"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   ward_func.send_blast(player, {castablename = "afflicto",
     speed = 25,
     range = 35,
     color = "#830000",
-    wand = wand,
+    fire_stick = fire_stick,
     on_hit_object = function(self, target)
-      wand_power = minetest.get_item_group(wand:get_name(), "wand_power")
-      ward_func.add_persistant_effect({object = target, duration = wand_power/3+1.5, persistance = 7/wand_power, effect = function(target)
+      fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
+      ward_func.add_persistant_effect({object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
         target:punch((self._shooter or self.object), 1.0, {
           full_punch_interval = 1.0,
           damage_groups = {fleshy = 1},
@@ -39,9 +39,9 @@ function(player, wand, pointed_thing)
   })
 end)
 
-ward_func.register_castable("deprimere", castable_class, 15, {{'sneak', 'aux1'}}, ward.alldescs["deprimere"], function(player, wand)
-  local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-  ward_func.send_blast( player, {castablename = "deprimere", speed = 25, range = 35, color = "#be4d0a", wand = wand, on_hit_object = function(self, target)
+ward_func.register_castable("deprimere", castable_class, 15, {{'sneak', 'aux1'}}, ward.alldescs["deprimere"], function(player, fire_stick)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+  ward_func.send_blast( player, {castablename = "deprimere", speed = 25, range = 35, color = "#be4d0a", fire_stick = fire_stick, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
       amount = 100,
       time = 0.1,
@@ -60,7 +60,7 @@ ward_func.register_castable("deprimere", castable_class, 15, {{'sneak', 'aux1'}}
         blend = "screen",
       }
     })
-    target:add_velocity(vector.new(0,-(wand_power/2+10),0))
+    target:add_velocity(vector.new(0,-(fire_stick_power/2+10),0))
   end})
 end, 20)
 
@@ -75,27 +75,27 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
     {'left', 'up', 'right', 'down', 'sneak'},
     {'left', 'right', 'up', 'down', 'sneak'},
     }, ward.alldescs["igneum_carmen"],
-    function(player, wand, pointed_thing)
-      local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
+    function(player, fire_stick, pointed_thing)
+      local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
 
       local deff = {castablename = "igneum_carmen",
         speed = 25,
         range = 35,
         color = "#ff420f",
-        wand = wand,
+        fire_stick = fire_stick,
         on_hit_node = function(self, under, above)
           local mtb = minetest.get_modpath("fire")
-          local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
-          if wand_power < 5 then
+          local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+          if fire_stick_power < 5 then
             if mtb then
               minetest.set_node(above, {name = "fire:basic_flame"})
             else
               minetest.set_node(above, {name = "mcl_fire:fire"})
             end
           else
-            local nval = minetest.find_nodes_in_area_under_air(vector.add(under, vector.new(-wand_power/3, -wand_power/3, -wand_power/3)), vector.add(under, vector.new(wand_power/3, wand_power/3, wand_power/3)), {"group:cracky", "group:crumbly", "group:oddly_breakable_by_hand", "group:choppy", "group:snappy", "group:pickaxey", "group:handy", "group:shovely", "group:axey", "group:swordy"})
+            local nval = minetest.find_nodes_in_area_under_air(vector.add(under, vector.new(-fire_stick_power/3, -fire_stick_power/3, -fire_stick_power/3)), vector.add(under, vector.new(fire_stick_power/3, fire_stick_power/3, fire_stick_power/3)), {"group:cracky", "group:crumbly", "group:oddly_breakable_by_hand", "group:choppy", "group:snappy", "group:pickaxey", "group:handy", "group:shovely", "group:axey", "group:swordy"})
             for k,v in pairs(nval) do
-              if math.random(5) < 3 and vector.distance(v, under) < wand_power/3 then
+              if math.random(5) < 3 and vector.distance(v, under) < fire_stick_power/3 then
                 if mtb then
                   minetest.set_node(vector.add(v, vector.new(0,1,0)), {name = "fire:basic_flame"})
                 else
@@ -108,14 +108,14 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
         on_hit_object = function(self, target)
 
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/2),
+            time = 1*(fire_stick_power/2),
             minacc = vector.new(0,2,0),
             maxacc = vector.new(0,2,0),
             minvel = vector.new(0.2,1,0.2),
             maxvel = vector.new(-0.2,-0.2,-0.2),
             posize = 0.2,
 
-            amount = 150*(wand_power/2),
+            amount = 150*(fire_stick_power/2),
             minsize = 0,
             maxsize = 10,
             minexptime = 0.2,
@@ -134,13 +134,13 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             }
           })
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/2),
+            time = 1*(fire_stick_power/2),
             minacc = vector.new(0,1,0),
             maxacc = vector.new(0,4,0),
             minvel = vector.new(0.3,0.3,0.3),
             maxvel = vector.new(-0.3,-0.2,-0.3),
 
-            amount = 100*(wand_power/2*(wand_power/2)),
+            amount = 100*(fire_stick_power/2*(fire_stick_power/2)),
             minsize = 3,
             maxsize = 5,
             minexptime = 0.2,
@@ -159,13 +159,13 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             }
           })
           ward_func.object_particlespawn_effect(target, {
-            time = 1*(wand_power/2),
+            time = 1*(fire_stick_power/2),
             minacc = vector.new(0,1,0),
             maxacc = vector.new(0,4,0),
             minvel = vector.new(0.1,1,0.1),
             maxvel = vector.new(-0.1,-0.2,-0.1),
 
-            amount = 30*(wand_power/2),
+            amount = 30*(fire_stick_power/2),
             minsize = 3,
             maxsize = 7,
             minexptime = 0.2,
@@ -184,17 +184,17 @@ if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
             },
             }
           })
-          local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
+          local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
           target:punch((self._shooter or self.object), 1.0, {
       			full_punch_interval = 1.0,
-      			damage_groups = {fleshy = wand_power},
+      			damage_groups = {fleshy = fire_stick_power},
       		}, self.object:get_velocity())
           if minetest.get_modpath("fire_plus") and target:is_player() then
-            fire_plus.burn_player(target, wand_power, 2)
+            fire_plus.burn_player(target, fire_stick_power, 2)
             self.object:remove()
             return
           elseif minetest.get_modpath("mcl_burning") then
-            mcl_burning.set_on_fire(target, wand_power)
+            mcl_burning.set_on_fire(target, fire_stick_power)
             self.object:remove()
             return
           end
@@ -213,23 +213,23 @@ ward_func.register_castable("obscurum", castable_class, 25,
 {
   {'sneak', 'down', 'sneak', 'up'},
 }, ward.alldescs["obscurum"],
-function(player, wand, pointed_thing)
+function(player, fire_stick, pointed_thing)
   ward_func.send_blast(player, {castablename = "obscurum",
     speed = 25,
     range = 25,
     color = "#111111",
-    wand = wand,
+    fire_stick = fire_stick,
     on_hit_object = function(self, target)
-      local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
+      local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
       local thedef = {
         posize = 5,
-        time = wand_power,
+        time = fire_stick_power,
         minacc = vector.new(0,0,0),
         maxacc = vector.new(0,0,0),
         minvel = vector.new(0.01,0.01,0.01),
         maxvel = vector.new(-0.01,-0.01,-0.01),
 
-        amount = 100*wand_power,
+        amount = 100*fire_stick_power,
         minsize = 3,
         maxsize = 7,
         minexptime = 0.2,
