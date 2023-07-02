@@ -374,6 +374,7 @@ function ward_func.send_blast(player, options)
   blast:get_luaentity()._on_hit_node = options.on_hit_node
   blast:get_luaentity()._shooter = player
   blast:add_velocity(vector.new(dtrandom(-0.4*(fire_stick_power-20), 0.4*(fire_stick_power-20)),dtrandom(-0.4*(fire_stick_power-20), 0.4*math.abs(fire_stick_power-20)),dtrandom(-0.4*(fire_stick_power-20), 0.4*(fire_stick_power-20))))
+  return blast
 end
 
 function ward.learn_castable(player, castable)
@@ -587,14 +588,16 @@ minetest.register_globalstep(function(dtime)
     end
 
 
-    for object,def in pairs(ward.affected_objects) do
-      if def.duration < minetest.get_gametime() then
-        ward.affected_objects[object] = nil
-      else
-        def.persistance[2] = def.persistance[2] + dtime
-        if def.persistance[2] > def.persistance[1] then
-          def.effect(object)
-          def.persistance[2] = 0
+    for object,defs in pairs(ward.affected_objects) do
+      for indexx,def in ipairs(defs) do
+        if def.duration < minetest.get_gametime() then
+          ward.affected_objects[object][indexx] = nil
+        else
+          def.persistance[2] = def.persistance[2] + dtime
+          if def.persistance[2] > def.persistance[1] then
+            def.effect(object)
+            def.persistance[2] = 0
+          end
         end
       end
     end
@@ -637,5 +640,6 @@ minetest.register_abm({
 })
 
 function ward_func.add_persistant_effect(def)
-  ward.affected_objects[def.object] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
+  ward.affected_objects[def.object] = ward.affected_objects[def.object] or {}
+  table.insert(ward.affected_objects[def.object], {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect})
 end

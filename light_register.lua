@@ -53,3 +53,39 @@ function(player, fire_stick, pointed_thing)
     end
   })
 end)
+
+
+
+ward_func.register_castable("ignis_proiecto", castable_class, 1,
+{
+  {'up', 'down', 'down'},
+}, ward.alldescs["ignis_proiecto"],
+function(player, fire_stick, pointed_thing)
+  ward_func.send_blast(player, {castablename = "ignis_proiecto",
+    speed = 25,
+    range = 35,
+    color = "#d1a876",
+    fire_stick = fire_stick,
+    on_hit_object = function(self, target)
+      local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
+      ward_func.object_particlespawn_effect(target, {
+        amount = 2000,
+        posize = 3,
+        time = fire_stick_power/2+3,
+        minsize = 2,
+        maxsize = 4,
+        minexptime = 0.2,
+        maxexptime = 0.7,
+        minacc = vector.new(0,1,0),
+        maxacc = vector.new(0,7,0),
+        minvel = vector.new(1,1,1),
+        maxvel = vector.new(-1,-0.2,-1),
+        texture = {
+          name = "ward_star.png^[colorize:"..self.hex_color..":210^ward_star_core.png",
+          scale_tween = {1.3, 0.1},
+          blend = "screen",
+        }
+      })
+    end
+  }):get_luaentity()._cast_on_caster = true
+end)
