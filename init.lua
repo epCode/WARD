@@ -23,6 +23,8 @@ ward_ui = {
 }
 
 dofile(minetest.get_modpath("ward").."/mana.lua")
+dofile(minetest.get_modpath("ward").."/craftitems.lua")
+dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
 
 
 
