@@ -85,7 +85,7 @@ minetest.register_entity("ward:learn_book_entity", {
 
 
 minetest.register_on_generated(function(minp, maxp, blockseed)
-  local random_place = blockseed%2
+  local random_place = blockseed%20
 
 
   if random_place == 1 then
