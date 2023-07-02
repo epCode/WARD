@@ -235,12 +235,14 @@ for k,v in pairs(ward.castables) do
 
   minetest.register_abm({
   	nodenames = {"ward:learn_"..v},
-  	interval = 1,
+  	interval = 5,
   	chance = 1,
   	action = function(pos, node)
+      if minetest.get_meta(pos):get_string("castable") == "" then return end
+      local colorize = {light = "267b97", neutral = "8f9726", dark = "671900"}
       spawn_book_entity(pos, true)
       ward_func.object_particlespawn_effect(pos, {
-        time = 1,
+        time = 5,
         minacc = vector.new(0,2,0),
         maxacc = vector.new(0,7,0),
         minvel = vector.new(0.1,0.1,0.1),
@@ -255,7 +257,7 @@ for k,v in pairs(ward.castables) do
         maxexptime = 0.5,
         glow = 14,
         texture = {
-          name = "ward_star.png^[colorize:#"..math.random(100000, 999999)..":210^ward_star_core.png",
+          name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")]]..":210^ward_star_core.png",
           alpha_tween = {1,0.1},
           scale_tween = {1, 0.01},
           blend = "screen",
