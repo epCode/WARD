@@ -1,6 +1,6 @@
 local castable_class = "neutral"
 
-ward_func.register_castable("exarmare", castable_class, 6, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, wand)
+ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, wand)
   local wand_power = minetest.get_item_group(wand:get_name(), 'wand_power')
   ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", wand = wand, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
