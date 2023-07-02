@@ -12,7 +12,7 @@ function(player, fire_stick, pointed_thing)
     fire_stick = fire_stick,
     on_hit_object = function(self, target)
       fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
-      ward_func.add_persistant_effect({object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
+      ward_func.add_persistant_effect({name = "afflicto", object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
         target:punch((self._shooter or self.object), 1.0, {
           full_punch_interval = 1.0,
           damage_groups = {fleshy = 1},

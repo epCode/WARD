@@ -30,7 +30,7 @@ function(player, fire_stick, pointed_thing)
     fire_stick = fire_stick,
     on_hit_object = function(self, target)
       fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
-      ward_func.add_persistant_effect({object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
+      ward_func.add_persistant_effect({name = "regenero", object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
         target:set_hp(target:get_hp()+1)
         ward_func.object_particlespawn_effect(target, {
           amount = 30,
@@ -68,6 +68,74 @@ function(player, fire_stick, pointed_thing)
     fire_stick = fire_stick,
     on_hit_object = function(self, target)
       local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
+
+
+      ward_func.add_persistant_effect({name = "ignis_proiecto", object = target, duration = fire_stick_power/2+3, persistance = 0.1, effect = function(target)
+        local objs = minetest.get_objects_inside_radius(target:get_pos(), 4)
+        for _,obj in ipairs(objs) do
+          if not obj:is_player() and obj:get_luaentity() and obj:get_luaentity()._is_arrow then
+            ward_func.object_particlespawn_effect(obj, {
+              time = 0.01,
+              minacc = vector.new(0,2,0),
+              maxacc = vector.new(0,2,0),
+              minvel = vector.new(0.2,1,0.2),
+              maxvel = vector.new(-0.2,-0.2,-0.2),
+              posize = 0.0,
+
+              amount = 150,
+              minsize = 0,
+              maxsize = 5,
+              minexptime = 0.2,
+              maxexptime = 3.2,
+              glow = 0,
+              texture = {
+                name = "ward_smoke_anim.png^[colorize:#6a6a6a:255",
+                alpha_tween = {0.7,0.1},
+                scale_tween = {0.1, 2},
+                animation = {
+                  type = "vertical_frames",
+                  aspect_w = 8,
+                  aspect_h = 8,
+                  length = 5,
+                },
+              }
+            })
+            ward_func.object_particlespawn_effect(obj, {
+              time = 0.01,
+              minacc = vector.new(0,1,0),
+              maxacc = vector.new(0,4,0),
+              minvel = vector.new(0.1,1,0.1),
+              maxvel = vector.new(-0.1,-0.2,-0.1),
+
+              amount = 150,
+              minsize = 0.1,
+              maxsize = 0.8,
+              minexptime = 0.2,
+              maxexptime = 0.5,
+              glow = 5,
+              texture = {
+                name = "ward_smoke_anim.png^[colorize:#fffb56:255",
+                alpha_tween = {0.7,0.1},
+                scale_tween = {0.1, 2},
+                blend = "screen",
+                animation = {
+                  type = "vertical_frames",
+                  aspect_w = 8,
+                  aspect_h = 8,
+                  length = 5,
+              },
+              }
+            })
+            minetest.after(0.01, function()
+              if obj and obj:get_velocity() then
+                obj:remove()
+              end
+            end)
+          end
+        end
+      end})
+
+
       ward_func.object_particlespawn_effect(target, {
         amount = 2000,
         posize = 3,

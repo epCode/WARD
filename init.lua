@@ -23,8 +23,6 @@ ward_ui = {
 }
 
 dofile(minetest.get_modpath("ward").."/mana.lua")
-dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
-dofile(minetest.get_modpath("ward").."/craftitems.lua")
 
 
 
@@ -501,7 +499,7 @@ minetest.register_globalstep(function(dtime)
     if meta:get_string("praesidium") ~= "" and minetest.deserialize(meta:get_string("praesidium"))[2] < minetest.get_gametime() then
       ward_func.remove_protection(player)
     end
-    if player:get_player_control().RMB and string.find(witem:get_name(), "ward") and string.find(witem:get_name(), "fire_stick") then
+    if player:get_player_control().RMB and string.find(witem:get_name(), "ward") and string.find(witem:get_name(), "wand") then
       playerphysics.add_physics_factor(player, "jump", "ward:fire_stick_pys", 0)
       playerphysics.add_physics_factor(player, "speed", "ward:fire_stick_pys", 0.3)
     else
@@ -591,7 +589,7 @@ minetest.register_globalstep(function(dtime)
 
 
     for object,defs in pairs(ward.affected_objects) do
-      for indexx,def in ipairs(defs) do
+      for indexx,def in pairs(defs) do
         if def.duration < minetest.get_gametime() then
           ward.affected_objects[object][indexx] = nil
         else
@@ -643,5 +641,5 @@ minetest.register_abm({
 
 function ward_func.add_persistant_effect(def)
   ward.affected_objects[def.object] = ward.affected_objects[def.object] or {}
-  table.insert(ward.affected_objects[def.object], {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect})
+  ward.affected_objects[def.object][def.name] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
 end
