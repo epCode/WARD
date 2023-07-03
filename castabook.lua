@@ -171,7 +171,7 @@ end)
 
 minetest.register_craftitem("ward:castabook", {
 	description = ("Book of Castables"),
-	inventory_image = "default_book.png",
+	inventory_image = "ward_castabook.png",
 	stack_max = 1,
 	groups = { castabook=1, book=1 },
 	_mcl_enchanting_enchanted_tool = "mcl_enchanting:book_enchanted",
@@ -211,8 +211,9 @@ end)
 
 minetest.register_craftitem("ward:lorebook", {
 	description = ("Book of Lore"),
-	inventory_image = "default_book.png",
+	inventory_image = "ward_lore_book.png",
 	stack_max = 1,
+  wield_scale = {x = 2, y = 2, z = 2},
 	groups = { castabook=1, book=1 },
 	_mcl_enchanting_enchanted_tool = "mcl_enchanting:book_enchanted",
   on_use = show_lorebook,
