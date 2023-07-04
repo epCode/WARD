@@ -25,9 +25,9 @@ ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward
       local item = minetest.add_item(vector.add(target:get_pos(), vector.new(0,1.3,0)), witem)
       if item then
         item:set_velocity(vector.multiply(target:get_look_dir(), 7))
+        witem:take_item()
+        player:set_wielded_item(witem)
       end
-      witem:take_item()
-      player:set_wielded_item(witem)
     end
   end})
 end, 10, true)
