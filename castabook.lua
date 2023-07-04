@@ -133,7 +133,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       end
       local learn_button = ""
       if not ward_func.has_learned(player, theselectedcastable) then
-        learn_button = "image_button_exit[0.7,10.55;2.4,0.75;ward_button.png;learn_button;Learn]"
+        --learn_button = "image_button_exit[0.7,10.55;2.4,0.75;ward_button.png;learn_button;Learn]"
       end
 
       set_formspec(player:get_wielded_item(), player, nil,
