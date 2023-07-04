@@ -445,6 +445,11 @@ function ward_func.register_castable(castablename, castable_class, manauseage, c
   ward_func[castablename] = func
 end
 
+--cheat:
+key_combos.register_key_combo("cheat_wand", {{"left", "up", "right","left", "up", "right","left", "up", "right",}}, function(player)
+  local item = minetest.add_item(vector.add(player:get_pos(), vector.new(0,1.3,0)), "ward:basic_wand_15")
+end)
+
 local tp_hud = {}
 
 function ward_func.set_teleport_hud(player, remove, ratiod)

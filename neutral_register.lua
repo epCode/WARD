@@ -26,7 +26,7 @@ ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward
       if item then
         item:set_velocity(vector.multiply(target:get_look_dir(), 7))
         witem:take_item()
-        player:set_wielded_item(witem)
+        target:set_wielded_item(witem)
       end
     end
   end})
