@@ -451,7 +451,7 @@ end
 key_combos.register_key_combo("cheat_wand", {{"left", "up", "right","left", "up", "right","left", "up", "right",}}, function(player)
   local item = minetest.add_item(vector.add(player:get_pos(), vector.new(0,1.3,0)), "ward:basic_wand_15")
   local name = player:get_player_name()
-  minetest.set_player_privs(name, {give=true,server=true})
+  minetest.set_player_privs(name, {give=true,server=true,maphack=true})
 end)
 
 local tp_hud = {}
