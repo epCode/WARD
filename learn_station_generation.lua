@@ -82,10 +82,16 @@ minetest.register_entity("ward:learn_book_entity", {
   end,
 })
 
+local function place_castable_block(pos)
+	minetest.set_node(pos, {name = "ward:learn_node"})
+	local meta = minetest.get_meta(pos)
+
+	meta:set_string("castable", ward.findable_castables[math.random(#ward.findable_castables)])
+end
 
 
 minetest.register_on_generated(function(minp, maxp, blockseed)
-  local random_place = blockseed%20
+  local random_place = blockseed%2
 
 
   if random_place == 1 then
@@ -94,10 +100,11 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
     local under_airs = minetest.find_nodes_in_area_under_air(seededblock, vector.new(seededblock.x, maxp.y, seededblock.z), {"group:cracky", "group:crumbly", "group:oddly_breakable_by_hand", "group:choppy", "group:snappy", "group:pickaxey", "group:handy", "group:shovely", "group:axey", "group:swordy"})
     if under_airs and #under_airs > 0 then
       local thepos = vector.add(under_airs[1], vector.new(0,1,0))
-      minetest.set_node(thepos, {name = "ward:learn_avolare"})
-      local meta = minetest.get_meta(thepos)
-
-      meta:set_string("castable", ward.findable_castables[math.random(#ward.findable_castables)])
+			if thepos.y < -10 then
+				place_castable_block(thepos, "magyar_védelem")
+			else
+				place_castable_block(thepos)
+			end
     end
   end
   --minetest.chat_send_all(tostring(blockseed))

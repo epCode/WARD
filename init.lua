@@ -37,6 +37,9 @@ local castablecastablehud_hud = {}
 function ward_func.has_learned(player, castable) -- see if player has the ability to wield said spell
   local meta = player:get_meta():get_string("castables")
   if meta ~= "" then
+    if minetest.deserialize(meta)[castable] then
+      return minetest.deserialize(meta)[castable]
+    end
     for _,V in ipairs(minetest.deserialize(meta)) do
       if V == castable then
         return true
@@ -53,7 +56,12 @@ function ward_func.learn(player, castable) -- give the player the ability to wie
     meta = player:get_meta():get_string("castables")
   end
   local castable_list = minetest.deserialize(meta)
-  table.insert(castable_list, castable)
+  if not castable_list[castable] then
+    castable_list[castable] = 1
+  else
+    minetest.chat_send_all("Upgraded!")
+    castable_list[castable] = 2
+  end
   player:get_meta():set_string("castables", minetest.serialize(castable_list))
 end
 
@@ -379,16 +387,6 @@ function ward_func.send_blast(player, options)
   return blast
 end
 
-function ward.learn_castable(player, castable)
-  local learned_castables = minetest.deserialize(player:get_meta():get_string("castables")) or {}
-  for k,v in pairs(learned_castables) do
-    if v == castable then
-      return false
-    end
-  end
-  table.insert(learned_castables, castable)
-  player:get_meta():set_string("castables", minetest.serialize(learned_castables))
-end
 
 minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
@@ -627,13 +625,13 @@ minetest.register_chatcommand("gspellme", {
 	func = function(name, param)
     if param == "all" then
       for k,v in pairs(ward.castables) do
-        ward.learn_castable(minetest.get_player_by_name(name), v)
+        ward_func.learn(minetest.get_player_by_name(name), v)
       end
-      return true
+      return true, "Learned castables: "..table.concat(minetest.deserialize(minetest.get_player_by_name(name):get_meta():get_string("castables")), ', ')..""
     end
     for k,v in pairs(ward.castables) do
       if v == param then
-        ward.learn_castable(minetest.get_player_by_name(name), v)
+        ward_func.learn(minetest.get_player_by_name(name), v)
         return true, "Learned castables: "..table.concat(minetest.deserialize(minetest.get_player_by_name(name):get_meta():get_string("castables")), ', ')..""
       end
     end

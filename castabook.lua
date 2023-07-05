@@ -126,16 +126,23 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
     if fields['castables'] and book_castables_table and book_castables and #book_castables > 0 then
       castable_index = fields['castables']:sub(5,-1)
+      if not book_castables[tonumber(castable_index)] then return end
       theselectedcastable = book_castables[tonumber(castable_index)]:gsub(" ", "_")
+      if not ward.castabledescs[theselectedcastable] then return end
       local castabledescs = ""
       for _,vv in pairs(ward.castabledescs[theselectedcastable][1]) do
         castabledescs = castabledescs..vv.."\n"
       end
       local learn_button = ""
+      local power_level = ""
+      local power_level_size = {0.6,0.3}
+      for i=1, ward.castable_class[theselectedcastable][2][2] do
+        power_level = power_level.."image["..tostring((0.2+(i*power_level_size[1]))-0.1)..",11.1;"..power_level_size[1]..","..power_level_size[2]..";ward_button.png^[colorize:#000000:255]"
+        power_level = power_level.."image["..tostring(0.2+(i*power_level_size[1]))..",11.2;"..(power_level_size[1]-0.2)..","..(power_level_size[2]-0.2)..";ward_button.png^[colorize:#39c81b:255]"
+      end
       if not ward_func.has_learned(player, theselectedcastable) then
         --learn_button = "image_button_exit[0.7,10.55;2.4,0.75;ward_button.png;learn_button;Learn]"
       end
-
       set_formspec(player:get_wielded_item(), player, nil,
       "image[0.5,8.7;2.8,2.8;ward_"..theselectedcastable..".png]"..
       "label[3.5,9;"..castabledescs.."]"..
@@ -143,7 +150,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       "image[0.6,0.7;6.85,0.8;ward_black.png]"..
       "image_button[0.3,11.7;4,1;ward_button.png;add_castables;Write Knowledge]"..
       "image[0.7,0.8;"..tostring(book_castables_table[theselectedcastable]*0.3325)..",0.6;ward_black.png^[colorize:#35ff37:190]"..
-      learn_button
+      learn_button..power_level
       )
       ward_ui.theselectedcastable[player:get_player_name()] = theselectedcastable
     elseif fields['add_castables'] then

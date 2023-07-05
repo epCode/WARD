@@ -1,6 +1,6 @@
 local castable_class = "neutral"
 
-ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, fire_stick)
+ward_func.register_castable("exarmare", {castable_class, {"exarmare", 1}}, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, fire_stick)
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", fire_stick = fire_stick, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
@@ -33,7 +33,7 @@ ward_func.register_castable("exarmare", castable_class, 25, {{'up', 'up'}}, ward
 end, 10, true)
 
 
-ward_func.register_castable("avolare", castable_class, 10, {{'sneak', 'down', 'up'}}, ward.alldescs["avolare"], function(player, fire_stick)
+ward_func.register_castable("avolare", {castable_class, {"avolare", 1}}, 10, {{'sneak', 'down', 'up'}}, ward.alldescs["avolare"], function(player, fire_stick)
   ward_func.send_blast(player, {castablename = "avolare", speed = 25, range = 35, color = "#ff1616", fire_stick = fire_stick, on_hit_object = function(self, target)
     local speed = 0.8
     if self._cast_on_caster then
@@ -65,7 +65,7 @@ ward_func.register_castable("avolare", castable_class, 10, {{'sneak', 'down', 'u
 end, 6)
 
 
-ward_func.register_castable("adducere", castable_class, 22, {{'sneak', 'down', 'down'}}, ward.alldescs["adducere"], function(player, fire_stick)
+ward_func.register_castable("adducere", {castable_class, {"adducere", 1}}, 22, {{'sneak', 'down', 'down'}}, ward.alldescs["adducere"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
 
@@ -99,7 +99,7 @@ ward_func.register_castable("adducere", castable_class, 22, {{'sneak', 'down', '
 end, 2)
 
 
-ward_func.register_castable("adducere_ferre", castable_class, 35, {{'sneak', 'down', 'left', 'right'}, {'sneak', 'down', 'right', 'left'}}, ward.alldescs["adducere_ferre"], function(player, fire_stick)
+ward_func.register_castable("adducere_ferre", {castable_class, {"adducere_ferre", 1}}, 35, {{'sneak', 'down', 'left', 'right'}, {'sneak', 'down', 'right', 'left'}}, ward.alldescs["adducere_ferre"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast( player, {castablename = "adducere_ferre", speed = 25, range = 35, color = "#a3ce63", fire_stick = fire_stick, on_hit_object = function(self, target)
@@ -111,7 +111,7 @@ ward_func.register_castable("adducere_ferre", castable_class, 35, {{'sneak', 'do
   end})
 end)
 
-ward_func.register_castable("tollere", castable_class, 17, {{'sneak', 'jump', 'left', 'right'}, {'sneak', 'jump', 'right', 'left'}}, ward.alldescs["tollere"], function(player, fire_stick)
+ward_func.register_castable("tollere", {castable_class, {"tollere", 1}}, 17, {{'sneak', 'jump', 'left', 'right'}, {'sneak', 'jump', 'right', 'left'}}, ward.alldescs["tollere"], function(player, fire_stick)
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast(player, {castablename = "tollere", speed = 25, range = 35, color = "#ffffff", fire_stick = fire_stick, on_hit_object = function(self, target)
@@ -126,7 +126,7 @@ end, 5)
 
 if minetest.get_modpath("wielded_light") then
   wielded_light.register_item_light('default:dirt', 14)
-  ward_func.register_castable("lux", castable_class, 10,
+  ward_func.register_castable("lux", {castable_class, {"lux", 1}}, 10,
     {
     {'aux1', 'aux1'},
     }, ward.alldescs["lux"],
@@ -156,7 +156,7 @@ if minetest.get_modpath("wielded_light") then
     end, 15)
 end
 
-ward_func.register_castable("delustro", castable_class, 8,
+ward_func.register_castable("delustro", {castable_class, {"delustro", 1}}, 8,
 {
   {'sneak', 'left', 'up', 'right'},
 }, ward.alldescs["delustro"],
@@ -231,7 +231,7 @@ local function set_portarum(player, tspots) -- to teleport
   minetest.show_formspec(player:get_player_name(), "ward:portarum", formspec)
 end
 
-ward_func.register_castable("portarum", castable_class, 50,
+ward_func.register_castable("portarum", {castable_class, {"portarum", 1}}, 50,
 {
   {'up', 'right', 'down', 'left', 'aux1', 'down'},
 }, ward.alldescs["portarum"],
@@ -243,7 +243,7 @@ function(player, fire_stick, pointed_thing)
   set_portarum(player, player_spots)
 end)
 
-ward_func.register_castable("occasu_portarum", castable_class, 30,
+ward_func.register_castable("occasu_portarum", {castable_class, {"occasu_portarum", 1}}, 30,
 {
   {'up', 'right', 'down', 'left', 'aux1', 'sneak'},
 }, ward.alldescs["occasu_portarum"],
@@ -359,7 +359,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields) --
 end)
 
 
-ward_func.register_castable("cogo", castable_class, 25,
+ward_func.register_castable("cogo", {castable_class, {"cogo", 1}}, 25,
 {
   {'left', 'right', 'down', 'up'},
 }, ward.alldescs["cogo"],
@@ -398,7 +398,7 @@ local function take_torch(player)
 	return torch_stack, torch_stack_id
 end
 
-ward_func.register_castable("luminum", castable_class, 8,
+ward_func.register_castable("luminum", {castable_class, {"luminum", 1}}, 8,
 {
   {'left', 'aux1', 'right'},
 }, ward.alldescs["luminum"],

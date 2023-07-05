@@ -130,6 +130,13 @@ ward.alldescs = {
     },
     "◀ > ▼ > ▶ > ◀ > ▼ > ▶"
   },
+  ["ignis_proiecto"] = {{
+    "Burns most projectiles",
+    "within a certain raduis",
+    "of caster.",
+    },
+    "◀ > ▼ > ▶ > ◀ > ▼ > ▶"
+  },
 }
 
 dofile(minetest.get_modpath("ward").."/dark_register.lua")
@@ -177,12 +184,14 @@ end)
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
     description = ("Book of Learn "..v),
-    inventory_image = "ward_"..ward.castable_class[v].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
+    inventory_image = "ward_"..ward.castable_class[v][1].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
     stack_max = 1,
     groups = { castabook=1, book=1 },
     on_use = function(itemstack, user, pointed_thing)
-      if not ward_func.has_learned(user, v) then
-        minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
+      if not ward_func.has_learned(user, v) or ward_func.has_learned(user, v) == 1 then
+        if not ward_func.has_learned(user, v) then
+          minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
+        end
         ward_func.learn(user, v)
         itemstack:take_item()
         return itemstack
@@ -216,53 +225,51 @@ local function spawn_book_entity(pos, respawn) -- ripped from mcl2
 end
 
 
-for k,v in pairs(ward.castables) do
-  minetest.register_node("ward:learn_"..v, {
-  	drawtype = "airlike",
-  	paramtype = "light",
-  	sunlight_propagates = true,
-  	--tiles = {"ward_empty.png"},
-  	light_source = 10,
-  	selection_box = {
-  		type = "fixed",
-  		fixed = {
-  			{0,0,0,0,0,0}
-  		}
-  	},
-    walkable = false,
-  	groups = {not_in_creative_inventory=1}
-  })
+minetest.register_node("ward:learn_node", {
+	drawtype = "airlike",
+	paramtype = "light",
+	sunlight_propagates = true,
+	--tiles = {"ward_empty.png"},
+	light_source = 10,
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{0,0,0,0,0,0}
+		}
+	},
+  walkable = false,
+	groups = {not_in_creative_inventory=1}
+})
 
-  minetest.register_abm({
-  	nodenames = {"ward:learn_"..v},
-  	interval = 5,
-  	chance = 1,
-  	action = function(pos, node)
-      if minetest.get_meta(pos):get_string("castable") == "" then return end
-      local colorize = {light = "267b97", neutral = "8f9726", dark = "671900"}
-      spawn_book_entity(pos, true)
-      ward_func.object_particlespawn_effect(pos, {
-        time = 5,
-        minacc = vector.new(0,2,0),
-        maxacc = vector.new(0,7,0),
-        minvel = vector.new(0.1,0.1,0.1),
-        maxvel = vector.new(-0.1,-0.1,-0.1),
-        extra_posmin = vector.new(-0.1,0.1,-0.1),
-        extra_posmax = vector.new(0.1,-1.3,0.1),
+minetest.register_abm({
+	nodenames = {"ward:learn_node"},
+	interval = 5,
+	chance = 1,
+	action = function(pos, node)
+    if minetest.get_meta(pos):get_string("castable") == "" then return end
+    local colorize = {light = "267b97", neutral = "8f9726", dark = "671900"}
+    spawn_book_entity(pos, true)
+    ward_func.object_particlespawn_effect(pos, {
+      time = 5,
+      minacc = vector.new(0,2,0),
+      maxacc = vector.new(0,7,0),
+      minvel = vector.new(0.1,0.1,0.1),
+      maxvel = vector.new(-0.1,-0.1,-0.1),
+      extra_posmin = vector.new(-0.1,0.1,-0.1),
+      extra_posmax = vector.new(0.1,-1.3,0.1),
 
-        amount = 500,
-        minsize = 0.2,
-        maxsize = 3,
-        minexptime = 0.2,
-        maxexptime = 0.5,
-        glow = 14,
-        texture = {
-          name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")]]..":210^ward_star_core.png",
-          alpha_tween = {1,0.1},
-          scale_tween = {1, 0.01},
-          blend = "screen",
-        },
-      })
-  	end
-  })
-end
+      amount = 500,
+      minsize = 0.2,
+      maxsize = 3,
+      minexptime = 0.2,
+      maxexptime = 0.5,
+      glow = 14,
+      texture = {
+        name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")][1]]..":210^ward_star_core.png",
+        alpha_tween = {1,0.1},
+        scale_tween = {1, 0.01},
+        blend = "screen",
+      },
+    })
+	end
+})

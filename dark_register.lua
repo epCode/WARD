@@ -1,6 +1,6 @@
 local castable_class = "dark"
 
-ward_func.register_castable("afflicto", castable_class, 30,
+ward_func.register_castable("afflicto", {castable_class, {"afflicto", 1}}, 30,
 {
   {'up', 'right', 'aux1', 'left'},
 }, ward.alldescs["afflicto"],
@@ -39,7 +39,7 @@ function(player, fire_stick, pointed_thing)
   })
 end)
 
-ward_func.register_castable("deprimere", castable_class, 15, {{'sneak', 'aux1'}}, ward.alldescs["deprimere"], function(player, fire_stick)
+ward_func.register_castable("deprimere", {castable_class, {"deprimere", 1}}, 15, {{'sneak', 'aux1'}}, ward.alldescs["deprimere"], function(player, fire_stick)
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast( player, {castablename = "deprimere", speed = 25, range = 35, color = "#be4d0a", fire_stick = fire_stick, on_hit_object = function(self, target)
     ward_func.object_particlespawn_effect(target, {
@@ -66,7 +66,7 @@ end, 20)
 
 
 if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
-  ward_func.register_castable("igneum_carmen", castable_class, 55,
+  ward_func.register_castable("igneum_carmen", {castable_class, {"igneum_carmen", 1}}, 55,
     {
     {'up', 'left', 'right', 'down', 'sneak'},
     {'up', 'right', 'left', 'down', 'sneak'},
@@ -209,7 +209,7 @@ end
 
 
 
-ward_func.register_castable("obscurum", castable_class, 25,
+ward_func.register_castable("obscurum", {castable_class, {"obscurum", 1}}, 25,
 {
   {'sneak', 'down', 'sneak', 'up'},
 }, ward.alldescs["obscurum"],

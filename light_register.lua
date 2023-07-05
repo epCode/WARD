@@ -1,6 +1,7 @@
 local castable_class = "light"
 
-ward_func.register_castable("praesidium", castable_class, 40, {{'left', 'aux1', 'up'}}, ward.alldescs["praesidium"], function(player, fire_stick)
+
+ward_func.register_castable("praesidium", {castable_class, {"praesidium", 1}}, 40, {{'left', 'aux1', 'up'}}, ward.alldescs["praesidium"], function(player, fire_stick)
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   if player:get_meta():get_string("praesidium") ~= "" then
     return
@@ -18,7 +19,7 @@ ward_func.register_castable("praesidium", castable_class, 40, {{'left', 'aux1', 
 end, 1)
 
 
-ward_func.register_castable("regenero", castable_class, 30,
+ward_func.register_castable("regenero", {castable_class, {"regenero", 1}}, 30,
 {
   {'left', 'down', 'right', 'left', 'down', 'right'},
 }, ward.alldescs["regenero"],
@@ -56,7 +57,7 @@ end)
 
 
 
-ward_func.register_castable("ignis_proiecto", castable_class, 1,
+ward_func.register_castable("ignis_proiecto", {castable_class, {"ignis_proiecto", 1}}, 1,
 {
   {'up', 'down', 'down'},
 }, ward.alldescs["ignis_proiecto"],
