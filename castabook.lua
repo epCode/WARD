@@ -81,7 +81,6 @@ local function set_formspec(itemstack, user, pointed_thing, formextra)
       book_castables = get_keys(book_castables_table)
     end
     if book_castables then
-      print(minetest.serialize(book_castables))
       for i,k in ipairs(book_castables) do
         book_castables[i] = k:gsub("_", ' ')
       end
@@ -136,9 +135,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       local learn_button = ""
       local power_level = ""
       local power_level_size = {0.6,0.3}
-      for i=1, ward.castable_class[theselectedcastable][2][2] do
-        power_level = power_level.."image["..tostring((0.2+(i*power_level_size[1]))-0.1)..",11.1;"..power_level_size[1]..","..power_level_size[2]..";ward_button.png^[colorize:#000000:255]"
-        power_level = power_level.."image["..tostring(0.2+(i*power_level_size[1]))..",11.2;"..(power_level_size[1]-0.2)..","..(power_level_size[2]-0.2)..";ward_button.png^[colorize:#39c81b:255]"
+      local players_castables = minetest.deserialize(player:get_meta():get_string("castables"))
+      if players_castables then
+        for i=1, players_castables[theselectedcastable] do
+          power_level = power_level.."image["..tostring((0.2+(i*power_level_size[1]))-0.1)..",11.1;"..power_level_size[1]..","..power_level_size[2]..";ward_button.png^[colorize:#000000:255]"
+          power_level = power_level.."image["..tostring(0.2+(i*power_level_size[1]))..",11.2;"..(power_level_size[1]-0.2)..","..(power_level_size[2]-0.2)..";ward_button.png^[colorize:#39c81b:255]"
+        end
       end
       if not ward_func.has_learned(player, theselectedcastable) then
         --learn_button = "image_button_exit[0.7,10.55;2.4,0.75;ward_button.png;learn_button;Learn]"
@@ -157,9 +159,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       if book_castables_table == nil then
         book_castables_table = {}
       end
-      player_vocab = player:get_meta():get_string("castables")
-      if player_vocab ~= '' then
-        for i,k in ipairs(minetest.deserialize(player_vocab)) do
+      player_vocab = ward_func.get_all_player_castables(player)
+      if #player_vocab > 0 then
+        for i,k in ipairs(player_vocab) do
           if not book_castables_table[k] then
             book_castables_table[k] = 1
           elseif book_castables_table[k] < 20 then

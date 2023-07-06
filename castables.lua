@@ -190,7 +190,24 @@ for k,v in pairs(ward.castables) do
     on_use = function(itemstack, user, pointed_thing)
       if not ward_func.has_learned(user, v) or ward_func.has_learned(user, v) == 1 then
         if not ward_func.has_learned(user, v) then
-          minetest.chat_send_player(user:get_player_name(), "You learned "..v.."!")
+          ward_func.object_particlespawn_effect(user, {
+            amount = 100,
+            time = 0.01,
+            minsize = 2,
+            maxsize = 4,
+            minexptime = 0.2,
+            maxexptime = 0.7,
+            minacc = vector.new(0,1,0),
+            maxacc = vector.new(0,7,0),
+            minvel = vector.new(1,1,1),
+            maxvel = vector.new(-1,-0.2,-1),
+            texture = {
+              name = "ward_star.png^[colorize:#e9d700:255^ward_star_core.png",
+              scale_tween = {1.3, 0.1},
+              blend = "screen",
+            }
+          })
+          minetest.chat_send_player(user:get_player_name(), "You learned "..minetest.colorize("#e9d700",v).."!")
         end
         ward_func.learn(user, v)
         itemstack:take_item()

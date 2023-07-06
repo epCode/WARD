@@ -49,6 +49,28 @@ function ward_func.has_learned(player, castable) -- see if player has the abilit
   end
 end
 
+function ward_func.get_all_player_castables(player)
+  local llist = {}
+  local meta = player:get_meta():get_string("castables")
+  if meta ~= "" then
+    for k,V in pairs(minetest.deserialize(meta)) do
+      if tonumber(tostring(k)) then
+        table.insert(llist, V)
+      else
+        table.insert(llist, k)
+      end
+    end
+  end
+  return llist
+end
+
+function ward_func.get_castable_strength(player, castable)
+  local meta = player:get_meta():get_string("castables")
+  if meta ~= "" then
+    return minetest.deserialize(meta)[castable]
+  end
+end
+
 function ward_func.learn(player, castable) -- give the player the ability to wield said spell
   local meta = player:get_meta():get_string("castables")
   if meta == '' then
@@ -70,7 +92,7 @@ local fire_stick_on_use = function(itemstack, user, pointed_thing) -- what to do
   if user and user:is_player() and ward_func[castable[1]] then
     if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
       ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
-      ward_func[castable[1]](user, itemstack, pointed_thing)
+      ward_func[castable[1]](user, itemstack, pointed_thing, ward_func.get_castable_strength(user, castable[1]))
       if user:is_player() and castablecastablehud_hud[user] then
         user:hud_remove(castablecastablehud_hud[user][1])
         castablecastablehud_hud[user] = nil

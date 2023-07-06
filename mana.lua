@@ -1,8 +1,8 @@
 
 
 local function calculate_max_mana(player)
-  if minetest.deserialize(player:get_meta():get_string("castables")) then
-    return #minetest.deserialize(player:get_meta():get_string("castables")) * 3 + 25
+  if ward_func.get_all_player_castables(player) then
+    return #ward_func.get_all_player_castables(player) * 3 + 25
   else
     return 0
   end
