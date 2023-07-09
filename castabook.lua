@@ -53,7 +53,25 @@ book_of_knowledge = {
   combonation of controls to activate the
   castable, once you do this you must wave
   it in the direction you wish the bolt, or
-  whatever is produced, to be cast.]==]
+  whatever is produced, to be cast.
+
+  Found anywhere you could imagine while
+  being also extremely rare, are books
+  of learning. These ancient books contain
+  the true knowledge to gain abilities like
+  what is afore mentioned. They appear in the
+  form of floating manusctipts in the wild.
+  I can think of not better way of explaining
+  it. You must simply interact with these
+  objects to eiter learn or gain a learnbook
+  of the subject power.
+
+  I must warn you, not all power is safe,
+  or good. much of it can be for evil.
+  These darker secrets are even rarer,
+  unlikely to discover or craft. but they
+  contain such harmful and dangerous
+  power, it may lead to dire consiqueces.]==]
 }
 
 local function get_keys(t)
@@ -114,6 +132,21 @@ local function item_in_list(list, item)
   return inlist
 end
 
+local function show_detailbook(itemstack, player)
+  local words = ward_ui.theselectedcastable[player:get_player_name()]
+  if not words then return end
+
+  local formspec =
+    "formspec_version[4]"..
+    "size[9,13]"..
+    "label[3,0.9;"..words.."]"..
+    "background[-0.5,-0;10,13;ward_bg.png]"..
+    "hypertext[0.5,1.9;8,11;<name>;"..words.."]"
+
+
+	minetest.show_formspec(player:get_player_name(), "ward:lorebook", formspec)
+end
+
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
   if formname == "ward:castabook" then
@@ -147,8 +180,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       end
       set_formspec(player:get_wielded_item(), player, nil,
       "image[0.5,8.7;2.8,2.8;ward_"..theselectedcastable..".png]"..
-      "label[3.5,9;"..castabledescs.."]"..
+      --"label[3.5,9;"..castabledescs.."]"..
       "label[0.5,0.35;"..ward.castabledescs[theselectedcastable][2].."]"..
+      "image_button[3.3,8.7;4.6,2.8;ward_large_button.png;show_longdesc;Details]"..
       "image[0.6,0.7;6.85,0.8;ward_black.png]"..
       "image_button[0.3,11.7;4,1;ward_button.png;add_castables;Write Knowledge]"..
       "image[0.7,0.8;"..tostring(book_castables_table[theselectedcastable]*0.3325)..",0.6;ward_black.png^[colorize:#35ff37:190]"..
@@ -174,6 +208,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       end
     elseif fields["learn_button"] and ward_ui.theselectedcastable[player:get_player_name()] then
       ward_func.learn(player, ward_ui.theselectedcastable[player:get_player_name()])
+    elseif fields["show_longdesc"] then
+      show_detailbook(witem, player)
     end
   end
 end)
@@ -201,6 +237,8 @@ local function show_lorebook(itemstack, player, pointed_thing)
 
 	minetest.show_formspec(player:get_player_name(), "ward:lorebook", formspec)
 end
+
+
 
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)

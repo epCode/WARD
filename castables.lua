@@ -54,6 +54,12 @@ ward.alldescs = {
     "",
     "",
     "",},
+    {
+    "Sends multiple targets",
+    "down quickly downwards.",
+    "",
+    "",
+    "",},
     "Sneak > Aux"
   },
   ["igneum_carmen"] = {{
@@ -169,55 +175,6 @@ end)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-for k,v in pairs(ward.castables) do
-  minetest.register_craftitem("ward:learnbook_"..v, {
-    description = ("Book of Learn "..v),
-    inventory_image = "ward_"..ward.castable_class[v][1].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
-    stack_max = 1,
-    groups = { castabook=1, book=1 },
-    on_use = function(itemstack, user, pointed_thing)
-      if not ward_func.has_learned(user, v) or ward_func.has_learned(user, v) == 1 then
-        if not ward_func.has_learned(user, v) then
-          ward_func.object_particlespawn_effect(user, {
-            amount = 100,
-            time = 0.01,
-            minsize = 2,
-            maxsize = 4,
-            minexptime = 0.2,
-            maxexptime = 0.7,
-            minacc = vector.new(0,1,0),
-            maxacc = vector.new(0,7,0),
-            minvel = vector.new(1,1,1),
-            maxvel = vector.new(-1,-0.2,-1),
-            texture = {
-              name = "ward_star.png^[colorize:#e9d700:255^ward_star_core.png",
-              scale_tween = {1.3, 0.1},
-              blend = "screen",
-            }
-          })
-          minetest.chat_send_player(user:get_player_name(), "You learned "..minetest.colorize("#e9d700",v).."!")
-        end
-        ward_func.learn(user, v)
-        itemstack:take_item()
-        return itemstack
-      end
-    end
-  })
-end
-
-
 local function spawn_book_entity(pos, respawn) -- ripped from mcl2
 	if respawn then
 		-- Check if we already have a book
@@ -242,6 +199,78 @@ local function spawn_book_entity(pos, respawn) -- ripped from mcl2
 end
 
 
+
+
+
+
+
+
+local function place_castable_block(pos, v)
+	minetest.set_node(pos, {name = "ward:learn_node"})
+	local meta = minetest.get_meta(pos)
+
+	meta:set_string("castable", v or ward.findable_castables[math.random(#ward.findable_castables)])
+end
+
+
+
+
+for k,v in pairs(ward.castables) do
+  minetest.register_craftitem("ward:learnbook_"..v, {
+    description = ("Book of Learn "..v),
+    inventory_image = "ward_"..ward.castable_class[v][1].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
+    stack_max = 1,
+    groups = { castabook=1, book=1 },
+    on_place = function(itemstack, placer, pointed_thing)
+      local node = minetest.get_node(pointed_thing.above)
+      if node and node.name == "air" then
+        place_castable_block(pointed_thing.above, v)
+        spawn_book_entity(pointed_thing.above)
+        local witem = placer:get_wielded_item()
+        witem:take_item()
+        placer:set_wielded_item(witem)
+      end
+    end,
+    on_use = function(itemstack, user, pointed_thing)
+      local not_learned = false
+      if not ward_func.has_learned(user, v) then
+        not_learned = true
+      end
+      if ward_func.learn(user, v) then
+        if not_learned then
+          minetest.chat_send_player(user:get_player_name(), "You learned "..minetest.colorize("#e9d700",v).."!")
+        else
+          minetest.chat_send_player(user:get_player_name(), "You have improved your use of "..minetest.colorize("#e9d700",v)..".")
+        end
+        ward_func.object_particlespawn_effect(user, {
+          amount = 100,
+          time = 0.01,
+          minsize = 2,
+          maxsize = 4,
+          minexptime = 0.2,
+          maxexptime = 0.7,
+          minacc = vector.new(0,1,0),
+          maxacc = vector.new(0,7,0),
+          minvel = vector.new(1,1,1),
+          maxvel = vector.new(-1,-0.2,-1),
+          texture = {
+            name = "ward_star.png^[colorize:#e9d700:255^ward_star_core.png",
+            scale_tween = {1.3, 0.1},
+            blend = "screen",
+          }
+        })
+        itemstack:take_item()
+        return itemstack
+      else
+        minetest.chat_send_player(user:get_player_name(), "You already fully grasp full understanding of "..minetest.colorize("#e9d700",v)..".")
+      end
+    end
+  })
+end
+
+
+
+
 minetest.register_node("ward:learn_node", {
 	drawtype = "airlike",
 	paramtype = "light",
@@ -260,14 +289,14 @@ minetest.register_node("ward:learn_node", {
 
 minetest.register_abm({
 	nodenames = {"ward:learn_node"},
-	interval = 5,
+	interval = 1,
 	chance = 1,
 	action = function(pos, node)
     if minetest.get_meta(pos):get_string("castable") == "" then return end
     local colorize = {light = "267b97", neutral = "8f9726", dark = "671900"}
     spawn_book_entity(pos, true)
     ward_func.object_particlespawn_effect(pos, {
-      time = 5,
+      time = 1,
       minacc = vector.new(0,2,0),
       maxacc = vector.new(0,7,0),
       minvel = vector.new(0.1,0.1,0.1),
@@ -275,14 +304,14 @@ minetest.register_abm({
       extra_posmin = vector.new(-0.1,0.1,-0.1),
       extra_posmax = vector.new(0.1,-1.3,0.1),
 
-      amount = 500,
+      amount = 50,
       minsize = 0.2,
       maxsize = 3,
       minexptime = 0.2,
       maxexptime = 0.5,
       glow = 14,
       texture = {
-        name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")][1]]..":210^ward_star_core.png",
+        name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")][1]]..":255^ward_star_core.png",
         alpha_tween = {1,0.1},
         scale_tween = {1, 0.01},
         blend = "screen",

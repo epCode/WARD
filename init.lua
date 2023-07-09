@@ -22,6 +22,8 @@ ward_ui = {
   book_of_knowledge_page = {},
 }
 
+lol = {}
+
 dofile(minetest.get_modpath("ward").."/mana.lua")
 dofile(minetest.get_modpath("ward").."/craftitems.lua")
 dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
@@ -78,13 +80,16 @@ function ward_func.learn(player, castable) -- give the player the ability to wie
     meta = player:get_meta():get_string("castables")
   end
   local castable_list = minetest.deserialize(meta)
+  local max_upgrade = ward.castable_class[castable][2][2]
   if not castable_list[castable] then
     castable_list[castable] = 1
+  elseif max_upgrade and castable_list[castable] < max_upgrade then
+    castable_list[castable] = castable_list[castable]+1
   else
-    minetest.chat_send_all("Upgraded!")
-    castable_list[castable] = 2
+    return false
   end
   player:get_meta():set_string("castables", minetest.serialize(castable_list))
+  return true
 end
 
 local fire_stick_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a fire_stick
@@ -501,6 +506,8 @@ end
 
 minetest.register_globalstep(function(dtime)
 	for _,player in pairs(minetest.get_connected_players()) do
+
+
     local meta = player:get_meta()
     local witem = player:get_wielded_item()
     local name = player:get_player_name()
