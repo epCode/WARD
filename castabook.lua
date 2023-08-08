@@ -137,6 +137,7 @@ end
 
 local function show_detailbook(itemstack, player)
   local words = ward.alldescs[ward_ui.theselectedcastable[player:get_player_name()]][1]
+  local combo = ward.alldescs[ward_ui.theselectedcastable[player:get_player_name()]][2]
   if not words then return end
   local descs = ""
   for i=1, 4 do
@@ -147,12 +148,14 @@ local function show_detailbook(itemstack, player)
   local formspec =
     "formspec_version[4]"..
     "size[9,13]"..
-    "hypertext[0.6,1.5;8,11;<name>;"..words.."]"..
-    "style_type[label;font_size=20]"..
     "background[-0.5,-0;10,13;ward_bg.png]"..
-    "label[0.9,1;"..castablename.."]"..
+    "hypertext[0.6,1.5;8,11;<name>;"..words.."]"..
+    "style_type[label;font_size=15]"..
+    "label[0.9,1;"..combo.."]"..
+    "style_type[label;font_size=25]"..
+    "label[0.9,0.4;"..castablename.."]"..
+    "style_type[label;font_size=18]"..
     descs
-
 
 	minetest.show_formspec(player:get_player_name(), "ward:lorebook", formspec)
 end
