@@ -136,20 +136,23 @@ local function item_in_list(list, item)
 end
 
 local function show_detailbook(itemstack, player)
-  local words = ward.alldescs[ward_ui.theselectedcastable[player:get_player_name()]][1]
-  local combo = ward.alldescs[ward_ui.theselectedcastable[player:get_player_name()]][2]
-  if not words then return end
+  local theselectedcastable = ward_ui.theselectedcastable[player:get_player_name()]
+  local words = ward.alldescs[theselectedcastable]
+  if words and #words < 1 or not words then return end
   local descs = ""
-  for i=1, 4 do
-    descs = "image[0.4,"..((i*2.2)+1.1)..";8.3,2.4;ward_long_bg.png]"..descs.."hypertext[0.6,"..((i*2.2)+1.8)..";8,11;<name>;"..words.."]".."label[0.9,"..((i*2.2)+1.6)..";Level "..i.."]"
+  local players_castables = minetest.deserialize(player:get_meta():get_string("castables"))
+  players_castables = players_castables[theselectedcastable] or 1
+  for i=1, players_castables do
+    descs = "image[0.4,"..((i*2.5)-0.2)..";8.3,2.4;ward_long_bg.png]"..descs.."hypertext[0.6,"..((i*2.5)+0.5)..";8,11;<name>;"..words[i].."]".."label[0.9,"..((i*2.5)+0.3)..";Level "..i.."]"
   end
-  local castablename = ward_ui.theselectedcastable[player:get_player_name()]:gsub("_", " ")
+  local castablename = theselectedcastable:gsub("_", " ")
+  local combo = words[#words]
   castablename = castablename:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
   local formspec =
     "formspec_version[4]"..
     "size[9,13]"..
     "background[-0.5,-0;10,13;ward_bg.png]"..
-    "hypertext[0.6,1.5;8,11;<name>;"..words.."]"..
+    --"hypertext[0.6,1.5;8,11;<name>;"..words[1].."]"..
     "style_type[label;font_size=15]"..
     "label[0.9,1;"..combo.."]"..
     "style_type[label;font_size=25]"..
@@ -178,7 +181,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       local power_level_size = {0.6,0.3}
       local players_castables = minetest.deserialize(player:get_meta():get_string("castables"))
       if players_castables then
-        for i=1, players_castables[theselectedcastable] do
+        for i=1, players_castables[theselectedcastable] do -- show power level with little green things
           power_level = power_level.."image["..tostring((0.2+(i*power_level_size[1]))-0.1)..",11.1;"..power_level_size[1]..","..power_level_size[2]..";ward_button.png^[colorize:#000000:255]"
           power_level = power_level.."image["..tostring(0.2+(i*power_level_size[1]))..",11.2;"..(power_level_size[1]-0.2)..","..(power_level_size[2]-0.2)..";ward_button.png^[colorize:#39c81b:255]"
         end

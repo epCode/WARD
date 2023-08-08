@@ -32,7 +32,7 @@ ward.alldescs = {
   ["deprimere"] = {
     [==[Sends the target down to earth.. quickly.
     ]==],
-    [==[ Sends multiple targetsdown quickly downwards.
+    [==[ Sends multiple targets quickly downwards.
     ]==],
     "Sneak > Aux"
   },
@@ -77,6 +77,8 @@ ward.alldescs = {
     "◀ > Use > ▶"
   },
   ["afflicto"] = {
+    [==[Damages the target over a certain amount of time.
+    ]==],
     [==[Damages the target over a certain amount of time.
     ]==],
     "▲ > ▶ > Use > ◀"
