@@ -66,12 +66,15 @@ book_of_knowledge = {
   objects to eiter learn or gain a learnbook
   of the subject power.
 
+  ]==],
+  [==[
   I must warn you, not all power is safe,
   or good. much of it can be for evil.
   These darker secrets are even rarer,
   unlikely to discover or craft. but they
   contain such harmful and dangerous
-  power, it may lead to dire consiqueces.]==]
+  power, it may lead to dire consiqueces.
+  ]==]
 }
 
 local function get_keys(t)
@@ -133,15 +136,22 @@ local function item_in_list(list, item)
 end
 
 local function show_detailbook(itemstack, player)
-  local words = ward_ui.theselectedcastable[player:get_player_name()]
+  local words = ward.alldescs[ward_ui.theselectedcastable[player:get_player_name()]][1]
   if not words then return end
-
+  local descs = ""
+  for i=1, 4 do
+    descs = "image[0.4,"..((i*2.2)+1.1)..";8.3,2.4;ward_long_bg.png]"..descs.."hypertext[0.6,"..((i*2.2)+1.8)..";8,11;<name>;"..words.."]".."label[0.9,"..((i*2.2)+1.6)..";Level "..i.."]"
+  end
+  local castablename = ward_ui.theselectedcastable[player:get_player_name()]:gsub("_", " ")
+  castablename = castablename:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
   local formspec =
     "formspec_version[4]"..
     "size[9,13]"..
-    "label[3,0.9;"..words.."]"..
+    "hypertext[0.6,1.5;8,11;<name>;"..words.."]"..
+    "style_type[label;font_size=20]"..
     "background[-0.5,-0;10,13;ward_bg.png]"..
-    "hypertext[0.5,1.9;8,11;<name>;"..words.."]"
+    "label[0.9,1;"..castablename.."]"..
+    descs
 
 
 	minetest.show_formspec(player:get_player_name(), "ward:lorebook", formspec)
@@ -160,11 +170,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       castable_index = fields['castables']:sub(5,-1)
       if not book_castables[tonumber(castable_index)] then return end
       theselectedcastable = book_castables[tonumber(castable_index)]:gsub(" ", "_")
-      if not ward.castabledescs[theselectedcastable] then return end
-      local castabledescs = ""
-      for _,vv in pairs(ward.castabledescs[theselectedcastable][1]) do
-        castabledescs = castabledescs..vv.."\n"
-      end
       local learn_button = ""
       local power_level = ""
       local power_level_size = {0.6,0.3}
@@ -180,8 +185,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       end
       set_formspec(player:get_wielded_item(), player, nil,
       "image[0.5,8.7;2.8,2.8;ward_"..theselectedcastable..".png]"..
-      --"label[3.5,9;"..castabledescs.."]"..
-      "label[0.5,0.35;"..ward.castabledescs[theselectedcastable][2].."]"..
       "image_button[3.3,8.7;4.6,2.8;ward_large_button.png;show_longdesc;Details]"..
       "image[0.6,0.7;6.85,0.8;ward_black.png]"..
       "image_button[0.3,11.7;4,1;ward_button.png;add_castables;Write Knowledge]"..

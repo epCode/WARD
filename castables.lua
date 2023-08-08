@@ -1,146 +1,94 @@
 ward.alldescs = {
-  ["exarmare"] = {{
-    "This disarms a player",
-    "(flings away thier wield",
-    "item). Fail chance is",
-    "80%. This decreases",
-    "with fire stick power.",},
+  ["exarmare"] = {
+    [==[This disarms a player (flings away thier wield item). Fail chance is 80%. This decreases with fire stick power.
+    ]==],
     "▲ > ▲"
   },
-  ["avolare"] = {{
-    "Launches target away",
-    "while damaging them a",
-    "small bit. It increases",
-    "speed and damage",
-    "with fire stick power.",},
+  ["avolare"] = {
+    [==[Launches target away while damaging them a small bit. It increases speed and damage with fire stick power.
+    ]==],
     "Sneak > ▼ > ▲"
   },
-  ["praesidium"] = {{
-    "Creates a temporary sh-",
-    "ield around caster for",
-    "blocking attacks. Fail",
-    "and duration decreases",
-    "with fire stick power.",},
+  ["praesidium"] = {
+    [==[Creates a temporary sh- ield around caster for blocking attacks. Fail and duration decreases with fire stick power.
+    ]==],
     "◀ > Use > ▲"
   },
-  ["adducere"] = {{
-    "Pulls the target towards",
-    "the caster. Speed incr-",
-    "eases with power.",
-    "Pull can be broken by",
-    "target if praesidium is",
-    "cast."},
+  ["adducere"] = {
+    [==[Pulls the target towards the caster. Speed incr- eases with power. Pull can be broken by target if praesidium is cast.
+    ]==],
     "Sneak > ▼ > ▼"
   },
-  ["adducere_ferre"] = {{
-    "Carries the target in",
-    "front of the caster.",
-    "duration and speed.",
-    "increase with",
-    "power. tip:(RMB+LMB)"},
+  ["adducere_ferre"] = {
+    [==[Carries the target in front of the caster. duration and speed. increase with power. tip:(RMB+LMB)
+    ]==],
     "Sneak > ▼ > (◀ + ▶)"
   },
-  ["tollere"] = {{
-    "Levitates target in the",
-    "air. Can be broken by",
-    "caster by defending",
-    "with praesidium.",
-    "",},
+  ["tollere"] = {
+    [==[Levitates target in the air. Can be broken by caster by defending with praesidium.
+    ]==],
     "Sneak > Jump > (◀ + ▶)"
   },
-  ["deprimere"] = {{
-    "Sends the target down",
-    "to earth.. quickly.",
-    "",
-    "",
-    "",},
-    {
-    "Sends multiple targets",
-    "down quickly downwards.",
-    "",
-    "",
-    "",},
+  ["deprimere"] = {
+    [==[Sends the target down to earth.. quickly.
+    ]==],
+    [==[ Sends multiple targetsdown quickly downwards.
+    ]==],
     "Sneak > Aux"
   },
-  ["igneum_carmen"] = {{
-    "Burns the target and ",
-    "sets them on fire. if",
-    " a node is hit, fire is",
-    "created in increasing",
-    "size with power.",},
+  ["igneum_carmen"] = {
+    [==[Burns the target and sets them on fire. if  a node is hit, fire is created in increasing size with power.
+    ]==],
     "(◀ + ▲ + ▶) > ▼ > Sneak"
   },
-  ["lux"] = {{
-    "makes the fire stick",
-    "a wielded light.",
-    "",
-    "",
-    "",},
+  ["lux"] = {
+    [==[makes the fire stick a wielded light.
+    ]==],
     "Use + Use"
   },
-  ["delustro"] = {{
-    "removes the effects of",
-    "all castables on the target",
-    "",
-    "",
-    "",},
+  ["delustro"] = {
+    [==[removes the effects of all castables on the target
+    ]==],
     "Sneak > ◀ > ▲ > ▶"
   },
-  ["portarum"] = {{
-    "Gives the ability to jump",
-    "to set teleport spots at a",
-    "moments notice.",
-    "Has a dedicated book.",
-    },
+  ["portarum"] = {
+    [==[Gives the ability to jump to set teleport spots at a moments notice. Has a dedicated book.
+    ]==],
     "▲ > ▶ > ▼ > ◀ > Aux1 > ▲"
   },
-  ["occasu_portarum"] = {{
-    "Is paired with portarum.",
-    "gives the ability to set",
-    "teleport spots.",
-    },
+  ["occasu_portarum"] = {
+    [==[Is paired with portarum. gives the ability to set teleport spots.
+    ]==],
     "▲ > ▶ > ▼ > ◀ > Aux1 > Sneak"
   },
-  ["obscurum"] = {{
-    "Creates smoke around",
-    "the caster.",
-    "",
-    },
+  ["obscurum"] = {
+    [==[Creates smoke around the caster.
+    ]==],
     "Sneak > ▼ > Sneak > ▲"
   },
-  ["cogo"] = {{
-    "Pulls in all surrounding",
-    "objects when the bolt",
-    "hits the ground.",
-    },
+  ["cogo"] = {
+    [==[Pulls in all surrounding objects when the bolt hits the ground.
+    ]==],
     "◀ > ▶ > ▼ > ▲"
   },
-  ["luminum"] = {{
-    "Casts a bolt to place",
-    "a torch from your",
-    "inventory.",
-    },
+  ["luminum"] = {
+    [==[Casts a bolt to place a torch from your inventory.
+    ]==],
     "◀ > Use > ▶"
   },
-  ["afflicto"] = {{
-    "Damages the target over",
-    "a certain amount of",
-    "time.",
-    },
+  ["afflicto"] = {
+    [==[Damages the target over a certain amount of time.
+    ]==],
     "▲ > ▶ > Use > ◀"
   },
-  ["regenero"] = {{
-    "Regenerates the targets",
-    "health over a certain",
-    "pertiod of time",
-    },
+  ["regenero"] = {
+    [==[Regenerates the targets health over a certain pertiod of time
+    ]==],
     "◀ > ▼ > ▶ > ◀ > ▼ > ▶"
   },
-  ["ignis_proiecto"] = {{
-    "Burns most projectiles",
-    "within a certain raduis",
-    "of caster.",
-    },
+  ["ignis_proiecto"] = {
+    [==[Burns most projectiles within a certain raduis of caster.
+    ]==],
     "◀ > ▼ > ▶ > ◀ > ▼ > ▶"
   },
 }
