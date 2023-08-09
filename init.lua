@@ -634,10 +634,10 @@ minetest.register_globalstep(function(dtime)
         if def.duration < minetest.get_gametime() then
           ward.special.affected_objects[object][indexx] = nil
         else
-          def.persistance[2] = def.persistance[2] + dtime
-          if def.persistance[2] > def.persistance[1] then
+          def.persistence[2] = def.persistence[2] + dtime
+          if def.persistence[2] > def.persistence[1] then
             def.effect(object)
-            def.persistance[2] = 0
+            def.persistence[2] = 0
           end
         end
       end
@@ -680,7 +680,7 @@ minetest.register_abm({
 	end
 })
 
-function ward_func.add_persistant_effect(def)
+function ward_func.add_persistent_effect(def)
   ward.special.affected_objects[def.object] = ward.special.affected_objects[def.object] or {}
-  ward.special.affected_objects[def.object][def.name] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
+  ward.special.affected_objects[def.object][def.name] = {duration = minetest.get_gametime()+def.duration, persistence = {def.persistence, 0}, effect = def.effect}
 end

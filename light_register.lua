@@ -31,7 +31,7 @@ function(player, fire_stick, pointed_thing)
     fire_stick = fire_stick,
     on_hit_object = function(self, target)
       fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
-      ward_func.add_persistant_effect({name = "regenero", object = target, duration = fire_stick_power/3+1.5, persistance = 7/fire_stick_power, effect = function(target)
+      ward_func.add_persistent_effect({name = "regenero", object = target, duration = fire_stick_power/3+1.5, persistence = 7/fire_stick_power, effect = function(target)
         target:set_hp(target:get_hp()+1)
         ward_func.object_particlespawn_effect(target, {
           amount = 30,
@@ -71,7 +71,7 @@ if minetest.get_modpath("x_bows") or minetest.get_modpath("mcl_bows") then
         local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), "fire_stick_power")
 
 
-        ward_func.add_persistant_effect({name = "ignis_proiecto", object = target, duration = fire_stick_power/2+3, persistance = 0.1, effect = function(target)
+        ward_func.add_persistent_effect({name = "ignis_proiecto", object = target, duration = fire_stick_power/2+3, persistence = 0.1, effect = function(target)
           local objs = minetest.get_objects_inside_radius(target:get_pos(), 4)
           for _,obj in ipairs(objs) do
             if not obj:is_player() and obj:get_luaentity() and (obj:get_luaentity()._is_arrow or obj:get_luaentity().name == "x_bows:arrow_entity") then
