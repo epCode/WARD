@@ -1,15 +1,19 @@
+--[[
+
+definitions:
+  Castable = a power (spell) example: "regenero; regains players health when cast on themselves"
+  fire stick/thing of power = the item used to channel the castables
+]]
+
+
 ward = {
   castable_combo_pressed_timer = {}, --recorded time when a castable combo was pressed (player indexed)
   fire_sticks = {}, --a name list of all fire_sticks
+  special = {ferre_obj={}, affected_objects={}, findable_castables={}},
+  castable_properties = {}, -- a list of callable properties for every castable
   castables = {}, --a name list of all castables
-  castabledescs = {}, --a list of all castables full description
-  ferre_obj = {}, --player indexed objectref info for when the player casts adducere_ferre on a non player obj
-  manauseage = {}, --the amount of mana each castablename uses, castablename indexed
-  affected_objects = {},
-  findable_castables = {},
-  selfcastablescastables = {},
-  castable_class = {},
 }
+
 ward_func = {} --public functions
 
 ward_mana = {
@@ -95,7 +99,7 @@ end
 local fire_stick_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a fire_stick
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
   if user and user:is_player() and ward_func[castable[1]] then
-    if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.manauseage[castable[1]]) then
+    if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.castable_properties[castable[1]].manauseage) then
       ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
       ward_func[castable[1]](user, itemstack, pointed_thing, ward_func.get_castable_strength(user, castable[1]))
       if user:is_player() and castablecastablehud_hud[user] then
@@ -375,7 +379,7 @@ function ward_func.send_blast(player, options)
   local fire_stick_power = minetest.get_item_group(options.fire_stick:get_name(), 'fire_stick_power')
   local eye_pos = vector.add(player:get_pos(), vector.add(vector.new(0,player:get_properties().eye_height,0), vector.multiply(player:get_look_dir(), 0.2)))
   local blast = minetest.add_entity(eye_pos, "ward:magic_entity")
-  if player:get_player_control().RMB and not player:get_player_control().LMB and ward.selfcastablescastables[options.castablename] then
+  if player:get_player_control().RMB and not player:get_player_control().LMB and ward.castable_properties[options.castablename].cast_on_selfs then
     blast:get_luaentity()._cast_on_caster = true
   end
   blast:get_luaentity()._particles = minetest.add_particlespawner({
@@ -425,7 +429,7 @@ end)
 local function show_castablecastablehud_hud(player, castablename)
   if not ward_func.has_learned(player, castablename) then return end
   local effect = ""
-  if not ward_func.use_mana(player, ward.manauseage[castablename] or 30, true) then
+  if not ward_func.use_mana(player, ward.castable_properties[castablename].manauseage or 30, true) then
     effect = "^ward_not_enough_mana.png"
   end
   if castablecastablehud_hud[player] and ward.castable_combo_pressed_timer[player:get_player_name()][2] < minetest.get_gametime() then
@@ -450,16 +454,15 @@ local function show_castablecastablehud_hud(player, castablename)
 end
 
 function ward_func.register_castable(castablename, castable_class, manauseage, combos, desc, func, finable, notcastableonself)
-  ward.castable_class[castablename] = castable_class
-  ward.castabledescs[castablename] = desc
-  ward.manauseage[castablename] = manauseage
+  ward.castable_properties[castablename] = {}
+  ward.castable_properties[castablename].castable_class = castable_class
+  ward.castable_properties[castablename].manauseage = manauseage
   if not notcastableonself then
-    ward.selfcastablescastables[castablename] = true
+    ward.castable_properties[castablename].cast_on_selfs = true
   end
-  if finable then
-    for i=1, finable do
-      table.insert(ward.findable_castables, castablename)
-    end
+  finable = finable or 0
+  for i=1, finable do
+    table.insert(ward.special.findable_castables, castablename)
   end
   table.insert(ward.castables, castablename)
   key_combos.register_key_combo(castablename, combos, function(player)
@@ -546,7 +549,7 @@ minetest.register_globalstep(function(dtime)
     end
     local to_pos = meta:get_string("to_pos")
 
-    local ferre_obj = ward.ferre_obj[player] -- This code block checks if a specific object exists and meets certain conditions before computing and updating its movement velocity towards a target position while dampening its velocity over time.
+    local ferre_obj = ward.special.ferre_obj[player] -- This code block checks if a specific object exists and meets certain conditions before computing and updating its movement velocity towards a target position while dampening its velocity over time.
     if ferre_obj and ferre_obj[1]:get_velocity() and ferre_obj[2] > minetest.get_gametime() and minetest.get_item_group(witem:get_name(), "fire_stick_power") ~= 0 then
       local obcol = ferre_obj[1]:get_properties().collisionbox or ferre_obj[1]:get_luaentity().collision_box or ferre_obj[1]:get_luaentity().collisionbox or {0.5, 0.5, 0.5, 0.5, 0.5, 0.5}
       local object_volume = math.abs(obcol[1]) + math.abs(obcol[2]) + math.abs(obcol[3]) + math.abs(obcol[4]) + math.abs(obcol[5]) + math.abs(obcol[6])
@@ -554,7 +557,7 @@ minetest.register_globalstep(function(dtime)
       ferre_obj[1]:add_velocity(vector.direction(ferre_obj[1]:get_pos(), go_to_this_pos) * (vector.distance(ferre_obj[1]:get_pos(), go_to_this_pos) / object_volume))
       ferre_obj[1]:set_velocity(ferre_obj[1]:get_velocity() * 0.83)
     else
-      ward.ferre_obj[player] = nil
+      ward.special.ferre_obj[player] = nil
     end
 
     if player:get_velocity() and player and to_pos and minetest.deserialize(to_pos) and to_pos ~= '' then -- this code allows the player to move towards a specified position
@@ -626,10 +629,10 @@ minetest.register_globalstep(function(dtime)
     end
 
 
-    for object,defs in pairs(ward.affected_objects) do
+    for object,defs in pairs(ward.special.affected_objects) do
       for indexx,def in pairs(defs) do
         if def.duration < minetest.get_gametime() then
-          ward.affected_objects[object][indexx] = nil
+          ward.special.affected_objects[object][indexx] = nil
         else
           def.persistance[2] = def.persistance[2] + dtime
           if def.persistance[2] > def.persistance[1] then
@@ -678,6 +681,6 @@ minetest.register_abm({
 })
 
 function ward_func.add_persistant_effect(def)
-  ward.affected_objects[def.object] = ward.affected_objects[def.object] or {}
-  ward.affected_objects[def.object][def.name] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
+  ward.special.affected_objects[def.object] = ward.special.affected_objects[def.object] or {}
+  ward.special.affected_objects[def.object][def.name] = {duration = minetest.get_gametime()+def.duration, persistance = {def.persistance, 0}, effect = def.effect}
 end

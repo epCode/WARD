@@ -86,7 +86,7 @@ local function place_castable_block(pos)
 	minetest.set_node(pos, {name = "ward:learn_node"})
 	local meta = minetest.get_meta(pos)
 
-	meta:set_string("castable", ward.findable_castables[math.random(#ward.findable_castables)])
+	meta:set_string("castable", ward.special.findable_castables[math.random(#ward.special.findable_castables)])
 end
 
 

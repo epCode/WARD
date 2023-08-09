@@ -1,3 +1,4 @@
+--A full list of the descriptions and key combonations for all castables
 ward.alldescs = {
   ["exarmare"] = {
     [==[This disarms a player (flings away thier wield item). Fail chance is 80%. This decreases with fire stick power.
@@ -100,6 +101,8 @@ ward.alldescs = {
   },
 }
 
+
+-- after making the descriptions and such, register all castables
 dofile(minetest.get_modpath("ward").."/dark_register.lua")
 dofile(minetest.get_modpath("ward").."/light_register.lua")
 dofile(minetest.get_modpath("ward").."/neutral_register.lua")
@@ -121,7 +124,7 @@ minetest.register_on_dieplayer(function(player, reason)
   end
   player:get_meta():set_string("to_pos", "")
   ward_func.remove_protection(player)
-  ward.affected_objects[player] = nil
+  ward.special.affected_objects[player] = nil
 end)
 
 
@@ -164,7 +167,7 @@ local function place_castable_block(pos, v)
 	minetest.set_node(pos, {name = "ward:learn_node"})
 	local meta = minetest.get_meta(pos)
 
-	meta:set_string("castable", v or ward.findable_castables[math.random(#ward.findable_castables)])
+	meta:set_string("castable", v or ward.special.findable_castables[math.random(#ward.special.findable_castables)])
 end
 
 
@@ -173,7 +176,7 @@ end
 for k,v in pairs(ward.castables) do
   minetest.register_craftitem("ward:learnbook_"..v, {
     description = ("Book of Learn "..v),
-    inventory_image = "ward_"..ward.castable_class[v][1].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
+    inventory_image = "ward_"..ward.castable_properties[v].castable_class[1].."_series_learnbook.png^ward_"..v.."_learnbook_ol.png",
     stack_max = 1,
     groups = { castabook=1, book=1 },
     on_place = function(itemstack, placer, pointed_thing)
@@ -266,7 +269,7 @@ minetest.register_abm({
       maxexptime = 0.5,
       glow = 14,
       texture = {
-        name = "ward_star.png^[colorize:#"..colorize[ward.castable_class[minetest.get_meta(pos):get_string("castable")][1]]..":255^ward_star_core.png",
+        name = "ward_star.png^[colorize:#"..colorize[ward.castable_properties[minetest.get_meta(pos):get_string("castable")].castable_class[1]]..":255^ward_star_core.png",
         alpha_tween = {1,0.1},
         scale_tween = {1, 0.01},
         blend = "screen",
