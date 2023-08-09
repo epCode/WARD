@@ -32,9 +32,16 @@ ward.alldescs = {
   ["deprimere"] = {
     [==[Sends the target down to earth.. quickly.
     ]==],
-    [==[ Sends multiple targets quickly downwards.
+    [==[ Sends multiple targets quickly downwards. Be careful!
     ]==],
-    "Sneak > Aux"
+    "Sneak > Use"
+  },
+  ["ascensio"] = {
+    [==[Launches target into the air.
+    ]==],
+    [==[Launches multiple targets quickly upwards. Use wisely.
+    ]==],
+    "Use > Sneak"
   },
   ["igneum_carmen"] = {
     [==[Burns the target and sets them on fire. if  a node is hit, fire is created in increasing size with fire stick power.
@@ -54,12 +61,12 @@ ward.alldescs = {
   ["portarum"] = {
     [==[Gives the ability to jump to set teleport spots at a moments notice. Has a dedicated book.
     ]==],
-    "▲ > ▶ > ▼ > ◀ > Aux1 > ▲"
+    "▲ > ▶ > ▼ > ◀ > Use1 > ▲"
   },
   ["occasu_portarum"] = {
     [==[Is paired with portarum. gives the ability to set teleport spots.
     ]==],
-    "▲ > ▶ > ▼ > ◀ > Aux1 > Sneak"
+    "▲ > ▶ > ▼ > ◀ > Use1 > Sneak"
   },
   ["obscurum"] = {
     [==[Creates smoke around the caster.

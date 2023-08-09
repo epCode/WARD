@@ -72,7 +72,6 @@ ward_func.register_castable("deprimere", {castable_class, {"deprimere", 2}}, 15,
   end})
 end, 20)
 
-
 if minetest.get_modpath("fire") or minetest.get_modpath("mcl_fire") then
   ward_func.register_castable("igneum_carmen", {castable_class, {"igneum_carmen", 1}}, 55,
     {

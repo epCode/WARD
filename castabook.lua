@@ -155,6 +155,7 @@ local function show_detailbook(itemstack, player)
     --"hypertext[0.6,1.5;8,11;<name>;"..words[1].."]"..
     "style_type[label;font_size=15]"..
     "label[0.9,1;"..combo.."]"..
+    "label[0.9,1.5;mana: "..ward.manauseage[theselectedcastable].."]"..
     "style_type[label;font_size=25]"..
     "label[0.9,0.4;"..castablename.."]"..
     "style_type[label;font_size=18]"..

@@ -159,3 +159,41 @@ if minetest.get_modpath("x_bows") or minetest.get_modpath("mcl_bows") then
     }):get_luaentity()._cast_on_caster = true
   end)
 end
+
+
+
+
+
+
+ward_func.register_castable("ascensio", {castable_class, {"ascensio", 2}}, 25, {{'aux1', 'sneak'}}, ward.alldescs["ascensio"], function(player, fire_stick, pointed_thing, sp)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+  ward_func.send_blast( player, {castablename = "ascensio", speed = 25, range = 35, color = "#d9a229", fire_stick = fire_stick, on_hit_object = function(self, target)
+    local targets = {target}
+    if sp > 1 then
+      for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:get_pos(), 2.5*sp)) do
+        table.insert(targets, obj)
+      end
+    end
+    for _,targ in ipairs(targets) do
+      ward_func.object_particlespawn_effect(targ, {
+        amount = 100,
+        time = 0.1,
+        minsize = 2,
+        maxsize = 4,
+        minexptime = 0.2,
+        maxexptime = 1,
+        --minacc = go_dir,
+        --maxacc = vector.multiply(go_dir, 0.7),
+        minvel = vector.new(0,2,0),
+        maxvel = vector.new(0,100,0),
+
+        texture = {
+          name = "ward_star.png^[colorize:"..self.hex_color..":210^ward_star_core.png",
+          scale_tween = {1.3, 0.1},
+          blend = "screen",
+        }
+      })
+      targ:add_velocity(vector.new(0,(fire_stick_power/3+8),0))
+    end
+  end})
+end, 12)
