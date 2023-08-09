@@ -19,7 +19,7 @@ book_of_knowledge = {
   is (for the most part) truthful. I speak only
   of one thing in all of this, Magic.
   The 'Things of power' from the
-  forementioned poem usually appear in the
+  aforementioned poem usually appear in the
   form of small polished and shaped switches
   of varying power and use. Once used by
   someone, it will forever be bound to him and]==],
@@ -53,15 +53,17 @@ book_of_knowledge = {
   combonation of controls to activate the
   castable, once you do this you must wave
   it in the direction you wish the bolt, or
-  whatever is produced, to be cast.
+  whatever is produced, to be cast. Additionaly,
+  if you rightclick the power will be cast apon
+  yourself; good or evil.
 
   Found anywhere you could imagine while
   being also extremely rare, are books
   of learning. These ancient books contain
   the true knowledge to gain abilities like
-  what is afore mentioned. They appear in the
-  form of floating manusctipts in the wild.
-  I can think of not better way of explaining
+  what I have already mentioned. They appear in
+  the form of floating manusctipts in the wild.
+  I can think of no better way of explaining
   it. You must simply interact with these
   objects to eiter learn or gain a learnbook
   of the subject power.
@@ -190,10 +192,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       if not ward_func.has_learned(player, theselectedcastable) then
         --learn_button = "image_button_exit[0.7,10.55;2.4,0.75;ward_button.png;learn_button;Learn]"
       end
+      local descs = ward.alldescs[theselectedcastable]
       set_formspec(player:get_wielded_item(), player, nil,
       "image[0.5,8.7;2.8,2.8;ward_"..theselectedcastable..".png]"..
       "image_button[3.3,8.7;4.6,2.8;ward_large_button.png;show_longdesc;Details]"..
       "image_button[0.3,11.7;4,1;ward_button.png;add_castables;Write Knowledge]"..
+      "style_type[label;font_size=18, font=bold]"..
+      "label[0.9,1.1;"..descs[#descs].."]"..
       --"image[0.6,0.7;6.85,0.8;ward_black.png]"..
       --"image[0.7,0.8;"..tostring(book_castables_table[theselectedcastable]*0.3325)..",0.6;ward_black.png^[colorize:#35ff37:190]"..
       learn_button..power_level
