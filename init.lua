@@ -84,7 +84,7 @@ function ward_func.learn(player, castable) -- give the player the ability to wie
     meta = player:get_meta():get_string("castables")
   end
   local castable_list = minetest.deserialize(meta)
-  local max_upgrade = ward.castable_class[castable][2][2]
+  local max_upgrade = ward.castable_properties[castable].castable_class[2][2]
   if not castable_list[castable] then
     castable_list[castable] = 1
   elseif max_upgrade and castable_list[castable] < max_upgrade then
