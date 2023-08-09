@@ -1,6 +1,6 @@
 local castable_class = "dark"
 
-ward_func.register_castable("afflicto", {castable_class, {"afflicto", 4}}, 30,
+ward_func.register_castable("afflicto", {castable_class, {"afflicto", 1}}, 30,
 {
   {'up', 'right', 'aux1', 'left'},
 }, ward.alldescs["afflicto"],

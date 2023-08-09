@@ -15,12 +15,12 @@ ward.alldescs = {
     "◀ > Use > ▲"
   },
   ["adducere"] = {
-    [==[Pulls the target towards the caster. Speed incr- eases with power. Pull can be broken by target if praesidium is cast.
+    [==[Pulls the target towards the caster. Speed increases with fire stick power. Pull can be broken by target if praesidium is cast.
     ]==],
     "Sneak > ▼ > ▼"
   },
   ["adducere_ferre"] = {
-    [==[Carries the target in front of the caster. duration and speed. increase with power. tip:(RMB+LMB)
+    [==[Carries the target in front of the caster. duration and speed. increase with fire stick power.
     ]==],
     "Sneak > ▼ > (◀ + ▶)"
   },
@@ -37,7 +37,7 @@ ward.alldescs = {
     "Sneak > Aux"
   },
   ["igneum_carmen"] = {
-    [==[Burns the target and sets them on fire. if  a node is hit, fire is created in increasing size with power.
+    [==[Burns the target and sets them on fire. if  a node is hit, fire is created in increasing size with fire stick power.
     ]==],
     "(◀ + ▲ + ▶) > ▼ > Sneak"
   },
@@ -77,9 +77,7 @@ ward.alldescs = {
     "◀ > Use > ▶"
   },
   ["afflicto"] = {
-    [==[Damages the target over a certain amount of time.
-    ]==],
-    [==[Damages the target over a certain amount of time.
+    [==[Damages the target over an amount of time. Based on the fire stick power.
     ]==],
     "▲ > ▶ > Use > ◀"
   },
@@ -91,7 +89,7 @@ ward.alldescs = {
   ["ignis_proiecto"] = {
     [==[Burns most projectiles within a certain raduis of caster.
     ]==],
-    "◀ > ▼ > ▶ > ◀ > ▼ > ▶"
+    "▲ > ▼ > ▼"
   },
 }
 
