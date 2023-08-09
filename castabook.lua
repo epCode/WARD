@@ -193,9 +193,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       set_formspec(player:get_wielded_item(), player, nil,
       "image[0.5,8.7;2.8,2.8;ward_"..theselectedcastable..".png]"..
       "image_button[3.3,8.7;4.6,2.8;ward_large_button.png;show_longdesc;Details]"..
-      "image[0.6,0.7;6.85,0.8;ward_black.png]"..
       "image_button[0.3,11.7;4,1;ward_button.png;add_castables;Write Knowledge]"..
-      "image[0.7,0.8;"..tostring(book_castables_table[theselectedcastable]*0.3325)..",0.6;ward_black.png^[colorize:#35ff37:190]"..
+      --"image[0.6,0.7;6.85,0.8;ward_black.png]"..
+      --"image[0.7,0.8;"..tostring(book_castables_table[theselectedcastable]*0.3325)..",0.6;ward_black.png^[colorize:#35ff37:190]"..
       learn_button..power_level
       )
       ward_ui.theselectedcastable[player:get_player_name()] = theselectedcastable
