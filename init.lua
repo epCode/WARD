@@ -31,6 +31,7 @@ lol = {}
 dofile(minetest.get_modpath("ward").."/mana.lua")
 dofile(minetest.get_modpath("ward").."/craftitems.lua")
 dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
+dofile(minetest.get_modpath("ward").."/recipies.lua")
 
 
 
@@ -123,7 +124,7 @@ end
 for i=1, 15 do
   ward.register_fire_stick("ward:basic_wand_"..i, {
     description = "Fire Stick\n "..minetest.colorize("#4a0000", "Power"..i),
-    inventory_image = "ward_dark_oak.png^fire_stick_overlay.png",
+    inventory_image = "ward_dark_oak.png^fire_stick_overlay-"..i..".png",
     on_use = fire_stick_on_use,
     on_secondary_use = fire_stick_on_use,
     range = 0,
@@ -206,7 +207,7 @@ function ward_func.object_particlespawn_effect(player, def)
   end
   def.posize = def.posize or 0
   local collbox = {-0.3, 0.0, -0.3, 0.3, 1.6, 0.3}
-  if player and not player:is_player() and player:get_luaentity() then
+  if player and player:get_luaentity() then
     collbox = player:get_properties().collisionbox
   end
   if not def.extra_posmax then
@@ -312,6 +313,8 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
       end)
     end
 
+
+
     if self._cast_on_caster and self._shooter and self._on_hit_object then
       self._on_hit_object(self, self._shooter)
       self.object:remove()
@@ -354,6 +357,14 @@ minetest.register_entity("ward:magic_entity", { -- castable entity
           return
         end
       elseif hitpoint.type == "node" then
+        local hitnode = minetest.registered_nodes[minetest.get_node(hitpoint.under).name]
+        if hitnode and minetest.get_item_group(hitnode.name, "falling_node") > 0 and self._on_hit_object then -- check if node hit is falling node (if so apply on_hit_object to it)
+          local tobj = minetest.spawn_falling_node(hitpoint.under)
+          local node = minetest.get_objects_inside_radius(hitpoint.under, 0.01)
+          if tobj and node[1] then
+            self._on_hit_object(self, node[1])
+          end
+        end
         if self._on_hit_node then
           self._on_hit_node(self, hitpoint.under, hitpoint.above)
         end

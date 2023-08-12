@@ -1,5 +1,9 @@
 local castable_class = "neutral"
 
+local function is_player(target)
+  return not target:get_luaentity() and target:is_player()
+end
+
 ward_func.register_castable("exarmare", {castable_class, {"exarmare", 1}}, 25, {{'up', 'up'}}, ward.alldescs["exarmare"], function(player, fire_stick)
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast(player, {castablename = "exarmare", speed = 25, range = 25, color = "#16ff31", fire_stick = fire_stick, on_hit_object = function(self, target)
@@ -20,7 +24,7 @@ ward_func.register_castable("exarmare", {castable_class, {"exarmare", 1}}, 25, {
         blend = "screen",
       }
     })
-    if target:is_player() and math.random(20/fire_stick_power) < 4 then
+    if not player:get_luaentity() and is_player(target) and math.random(20/fire_stick_power) < 4 then
       witem = target:get_wielded_item()
       local item = minetest.add_item(vector.add(target:get_pos(), vector.new(0,1.3,0)), witem)
       if item then
@@ -39,7 +43,7 @@ ward_func.register_castable("avolare", {castable_class, {"avolare", 1}}, 10, {{'
     if self._cast_on_caster then
       speed = 0.5
     end
-    if math.random(3) == 1 and target:is_player() then
+    if math.random(3) == 1 and is_player(target) then
       target:get_meta():set_string("to_pos", "")
     end
     local move_speed = vector.add(vector.multiply(self.object:get_velocity(), speed/2.2), vector.new(0,5*speed,0))
@@ -90,7 +94,7 @@ ward_func.register_castable("adducere", {castable_class, {"adducere", 1}}, 22, {
         blend = "screen",
       }
     })
-    if target:is_player() then
+    if is_player(target) then
       target:get_meta():set_string("to_pos", minetest.serialize({vector.add(player:get_pos(), vector.multiply(player:get_look_dir(), 3)), minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
       target:set_velocity(vector.multiply(vector.direction(target:get_pos(), player:get_pos()), fire_stick_power*2))
@@ -103,10 +107,10 @@ ward_func.register_castable("adducere_ferre", {castable_class, {"adducere_ferre"
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast( player, {castablename = "adducere_ferre", speed = 25, range = 35, color = "#a3ce63", fire_stick = fire_stick, on_hit_object = function(self, target)
-    if target:is_player() then
+    if is_player(target) then
       target:get_meta():set_string("to_pos", minetest.serialize({{"player", player:get_player_name()}, minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
-      ward.ferre_obj[player] = {target, minetest.get_gametime()+fire_stick_power/2}
+      ward.special.ferre_obj[player] = {target, minetest.get_gametime()+fire_stick_power/2}
     end
   end})
 end)
@@ -115,7 +119,7 @@ ward_func.register_castable("tollere", {castable_class, {"tollere", 1}}, 17, {{'
   if player:get_meta():get_string("to_pos") ~= '' then return end
   local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
   ward_func.send_blast(player, {castablename = "tollere", speed = 25, range = 35, color = "#ffffff", fire_stick = fire_stick, on_hit_object = function(self, target)
-    if target:is_player() then
+    if is_player(target) then
       target:get_meta():set_string("to_pos", minetest.serialize({vector.add(target:get_pos(), vector.new(0,3,0)), minetest.get_gametime()+fire_stick_power/2, fire_stick_power}))
     else
       target:set_velocity(vector.new(0,fire_stick_power/3+7,0))
@@ -161,8 +165,10 @@ ward_func.register_castable("delustro", {castable_class, {"delustro", 1}}, 8,
   {'sneak', 'left', 'up', 'right'},
 }, ward.alldescs["delustro"],
 function(player, fire_stick, pointed_thing)
+  local fire_stick_power = minetest.get_item_group(fire_stick:get_name(), 'fire_stick_power')
+
   ward_func.send_blast(player, {castablename = "delustro", speed = 25, range = 35, color = "#ffffff", fire_stick = fire_stick, on_hit_object = function(self, target)
-    if target:is_player() then
+    if is_player(target) then
       target:get_meta():set_string("to_pos", "")
       ward_func.remove_protection(target)
     else

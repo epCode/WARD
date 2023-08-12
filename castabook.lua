@@ -18,7 +18,7 @@ book_of_knowledge = {
   First I will disclose that the old rhyme
   is (for the most part) truthful. I speak only
   of one thing in all of this, Magic.
-  The 'Things of power' from the
+  The 'Sticks of Fire' from the
   aforementioned poem usually appear in the
   form of small polished and shaped switches
   of varying power and use. Once used by
@@ -49,7 +49,7 @@ book_of_knowledge = {
   To use a castable, you must be carrying a]==],
 
   [==[
-  thing of power and press the correct
+  Fire Stick and press the correct
   combonation of controls to activate the
   castable, once you do this you must wave
   it in the direction you wish the bolt, or
