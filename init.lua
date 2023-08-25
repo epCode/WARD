@@ -6,6 +6,29 @@ definitions:
 ]]
 
 
+--[[
+
+TODO:::
+
+Add an intricate craft direction for the fire sticks - High priority
+  Make more books in relation to creation of sticks of power
+
+  Creation power: 1-8
+
+    take two sticks and combine them (in craftatory) X2
+      allow these sticks to crisp in furnace (long burn time) but you don't want that otherwise they become useless
+
+
+
+
+Make a little achievment thing pop up when a new castable is lernt - Medium
+
+
+
+]]
+
+
+
 ward = {
   castable_combo_pressed_timer = {}, --recorded time when a castable combo was pressed (player indexed)
   fire_sticks = {}, --a name list of all fire_sticks
@@ -28,10 +51,45 @@ ward_ui = {
 
 lol = {}
 
+ward.items = {
+  fire_item = minetest.registered_items["fire:flint_and_steel"],
+  stick = minetest.registered_items["default:stick"],
+  iron = minetest.registered_items["default:steel_ingot"],
+}
+
+
+
+ward.items.fire_item =
+  minetest.registered_items["fire:flint_and_steel"] or
+  minetest.registered_items["mcl_fire:fire_charge"] or
+  minetest.registered_items["bucket:bucket_lava"] or
+  ward.items.fire_item
+
+
+ward.items.stick =
+  minetest.registered_items["default:stick"] or
+  minetest.registered_items["mcl_core:stick"] or
+  ward.items.stick
+
+
+ward.items.iron =
+  minetest.registered_items["default:steel_ingot"] or
+  minetest.registered_items["mcl_core:iron_ingot"] or
+  ward.items.iron
+
+ward.items.lava =
+  minetest.registered_items["default:lava_source"] or
+  minetest.registered_items["mcl_core:lava_source"] or
+  ward.items.lava
+
+
+
 dofile(minetest.get_modpath("ward").."/mana.lua")
 dofile(minetest.get_modpath("ward").."/craftitems.lua")
 dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
 dofile(minetest.get_modpath("ward").."/recipies.lua")
+dofile(minetest.get_modpath("ward").."/forging.lua")
+dofile(minetest.get_modpath("ward").."/chiping_table.lua")
 
 
 
@@ -97,9 +155,20 @@ function ward_func.learn(player, castable) -- give the player the ability to wie
   return true
 end
 
-local fire_stick_on_use = function(itemstack, user, pointed_thing) -- what to do when rightclick or leftclick is pressed while wielding a fire_stick
+
+-- what to do when rightclick or leftclick is pressed while wielding a fire_stick
+local fire_stick_on_use = function(itemstack, user, pointed_thing)
+
+  -- the castable the player has entered the combo for (if any)
   local castable = ward.castable_combo_pressed_timer[user:get_player_name()]
-  if user and user:is_player() and ward_func[castable[1]] then
+    --[[ indexed:
+      castable = {castable_name, time_since_pressed}
+    ]]
+
+  if user -- possibly abritrary check
+  and user:is_player()
+  and ward_func[castable[1]] --
+  then
     if ward_func.has_learned(user, castable[1]) and ward_func.use_mana(user, ward.castable_properties[castable[1]].manauseage) then
       ward.castable_combo_pressed_timer[user:get_player_name()] = {"", 0}
       ward_func[castable[1]](user, itemstack, pointed_thing, ward_func.get_castable_strength(user, castable[1]))
@@ -126,6 +195,7 @@ for i=1, 15 do
     description = "Fire Stick\n "..minetest.colorize("#4a0000", "Power"..i),
     inventory_image = "ward_dark_oak.png^fire_stick_overlay-"..i..".png",
     on_use = fire_stick_on_use,
+    wield_scale = {x = 2, y = 2, z = 2},
     on_secondary_use = fire_stick_on_use,
     range = 0,
     groups = {fire_stick_power=i}
@@ -208,7 +278,7 @@ function ward_func.object_particlespawn_effect(player, def)
   def.posize = def.posize or 0
   local collbox = {-0.3, 0.0, -0.3, 0.3, 1.6, 0.3}
   if player and player:get_luaentity() then
-    collbox = player:get_properties().collisionbox
+    collbox = player:get_properties().selectionbox or player:get_properties().collisionbox
   end
   if not def.extra_posmax then
     def.extra_posmax = vector.new(0,0,0)
@@ -229,7 +299,7 @@ function ward_func.object_particlespawn_effect(player, def)
     maxexptime = def.maxexptime or 0.2,
     minsize = def.minsize or 0.1,
     maxsize = def.maxsize or 0.7,
-    collisiondetection = false,
+    collisiondetection = def.collisiondetection or false,
     attached = player,
     vertical = false,
     texture = def.texture or "ward_star.png",

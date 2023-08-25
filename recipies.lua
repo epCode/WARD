@@ -18,35 +18,17 @@ cogo,
 luminum
 ]]
 
-local items = {
-  fire_item = minetest.registered_items["fire:flint_and_steel"],
-  stick = minetest.registered_items["default:stick"],
-}
-
-local descs = {
-
-}
+ward.forged_items = {}
 
 
-items.fire_item =
-  minetest.registered_items["fire:flint_and_steel"] or
-  minetest.registered_items["mcl_fire:fire_charge"] or
-  minetest.registered_items["bucket:bucket_lava"] or
-  items.fire_item
-
-
-items.stick =
-  minetest.registered_items["default:stick"] or
-  minetest.registered_items["mcl_core:stick"] or
-  items.stick
 
 
 minetest.register_craft({
   output = 'ward:basic_wand_1',
   recipe = {
-    {'', items.fire_item.name, ''},
-    {items.fire_item.name, items.stick.name, items.fire_item.name},
-    {items.fire_item.name, items.stick.name, items.fire_item.name}
+    {'', ward.items.fire_item.name, ''},
+    {ward.items.fire_item.name, ward.items.stick.name, ward.items.fire_item.name},
+    {ward.items.fire_item.name, ward.items.stick.name, ward.items.fire_item.name}
   },
 })
 
@@ -62,4 +44,42 @@ minetest.register_craft({
   recipe = {
     {'ward:learnbook_deprimere', 'ward:learnbook_exarmare', 'ward:damage_stone'},
   },
+})
+
+
+minetest.register_craft({
+  output = 'ward:double_stick',
+  recipe = {
+    {ward.items.stick.name, ward.items.stick.name},
+  },
+})
+
+
+function ward.register_forged_item(def)
+  ward.forged_items[def.output] = def
+end
+
+function ward.get_forge_result(def)
+  for k,v in pairs(ward.forged_items) do
+    if v.recipe[1] == def.items[1] or v.recipe[1] == def.items[2] then
+      if v.recipe[2] == def.items[1] or v.recipe[2] == def.items[2] then
+        return {item = ItemStack(v.output), time = v.cooktime, double_heat = v.double_heat}
+      end
+    end
+  end
+  return {item = ItemStack(""), time = 0}
+end
+
+
+
+ward.register_forged_item({
+	cooktime = 2,
+	output = "ward:double_stick_burnt",
+	recipe = {'ward:double_stick', ''}
+})
+
+ward.register_forged_item({
+	cooktime = 25,
+	output = "ward:double_stick_reinforced",
+	recipe = {'ward:double_stick', ward.items.iron.name}
 })

@@ -6,3 +6,109 @@ minetest.register_craftitem("ward:damage_stone", {
     --ward_func.compatible_explode(user:get_pos())
   end
 })
+
+--------------------------
+-- Stick Crafting
+--------------------------
+
+minetest.register_craftitem("ward:double_stick", { -- base large stick
+  description = ("Large Stick"),
+  inventory_image = "ward_stick_double.png",
+  stack_max = 32,
+  wield_scale = {x = 2, y = 2, z = 2},
+  groups = {ward_burnable = 1},
+  on_use = function(itemstack, user, pointed_thing)
+    if math.random(3) == 1 then
+      itemstack:set_name("ward:double_stick_broke")
+      return itemstack
+    end
+  end
+})
+
+minetest.register_craftitem("ward:double_stick_burnt", { -- the base stick burnt
+  description = ("Large Burnt Stick"),
+  groups = {not_in_creative_inventory=1},
+  inventory_image = "ward_stick_double_burnt.png",
+  stack_max = 32,
+  wield_scale = {x = 2, y = 2, z = 2},
+  on_use = function(itemstack, user, pointed_thing)
+    if math.random(1) == 1 then
+      itemstack:set_name("ward:double_stick_burnt_broke")
+      return itemstack
+    end
+  end
+})
+
+
+minetest.register_craftitem("ward:double_stick_broke", { -- the large stick broken
+  description = ("Large Broken Stick"),
+  groups = {not_in_creative_inventory=1},
+  inventory_image = "ward_stick_double_broke.png",
+  stack_max = 32,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+minetest.register_craftitem("ward:double_stick_burnt_broke", { -- the large stick burnt and broken
+  description = ("Large Burnt and Broken Stick"),
+  groups = {not_in_creative_inventory=1},
+  inventory_image = "ward_stick_double_burnt_broke.png",
+  stack_max = 12,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+
+minetest.register_craftitem("ward:double_stick_reinforced", { -- the large stick after forged with steel
+  description = ("Large Reinforced Stick"),
+  inventory_image = "ward_double_stick_reinforced.png",
+  groups = {ward_burnable = 1},
+  stack_max = 1,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+minetest.register_craftitem("ward:double_stick_reinforced_burning", { -- the large forged stick burning
+  description = ("Large Burning Reinforced Stick"),
+  groups = {not_in_creative_inventory=1},
+  inventory_image = "ward_double_stick_reinforced_burning.png",
+  groups = {ward_burning = 1},
+  stack_max = 1,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+
+
+minetest.register_craftitem("ward:double_stick_reinforced_burnt", { -- the large forged stick burnt
+  description = ("Large Burnt Reinforced Stick"),
+  groups = {not_in_creative_inventory=1},
+  inventory_image = "ward_stick_double_burnt.png",
+  stack_max = 1,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+minetest.register_craftitem("ward:double_stick_diamond", { -- the large forged stick burnt
+  description = ("Large Stick with a Diamond"),
+  inventory_image = "ward_double_stick_diamond.png",
+  stack_max = 1,
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+
+
+
+--------------------------
+-- Gem Crafting
+--------------------------
+
+minetest.register_craftitem("ward:diamond_chip_tiny", {
+  description = ("A Tiny Diamond Chip"),
+  inventory_image = "ward_diamond_chip_tiny.png",
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+minetest.register_craftitem("ward:diamond_chip_small", {
+  description = ("A Small Diamond Chip"),
+  inventory_image = "ward_diamond_chip_small.png",
+  wield_scale = {x = 2, y = 2, z = 2},
+})
+minetest.register_craftitem("ward:diamond_chip_med", {
+  description = ("A Medium Diamond Chip"),
+  inventory_image = "ward_diamond_chip_med.png",
+  wield_scale = {x = 2, y = 2, z = 2},
+})

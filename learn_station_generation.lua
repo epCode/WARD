@@ -107,5 +107,4 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
 			end
     end
   end
-  --minetest.chat_send_all(tostring(blockseed))
 end)
