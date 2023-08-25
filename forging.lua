@@ -467,7 +467,7 @@ minetest.register_craft({
 	output = "ward:forge",
 	recipe = {
 		{"group:stone", "group:stone", "group:stone"},
-		{"group:stone", "", "group:stone"},
+		{"group:stone", ward.items.iron["name"], "group:stone"},
 		{"group:stone", "group:stone", "group:stone"},
 	}
 })
