@@ -4,6 +4,8 @@ local gems = {
 
 TABLEITEMOFFSET = vector.new(0,1,0)
 
+local mineclone = minetest.get_modpath("mcl_core")
+
 local nodebox = {
   { -0.5 , -0.5 , -0.5 , -0.37 , 0.13 , -0.37}, -- legs
   { 0.37 , -0.5 , -0.5 , 0.5 , 0.13 , -0.37},
@@ -41,15 +43,24 @@ end
 
 minetest.register_node("ward:chiping_table", {
   description = "Chipping Table",
-  drawtype = "nodebox",
-  --mesh = "ward_chiping_table.obj",
-  node_box = {
+  drawtype = "mesh",
+  mesh = "ward_chiping_table.obj",
+  selection_box = {
     type = "fixed",
     fixed = nodebox,
   },
+  collision_box = {
+    type = "fixed",
+    fixed = nodebox,
+  },
+  --[[
+  node_box = {
+    type = "fixed",
+    fixed = nodebox,
+  },]]
   inventory_image = "ward_chiping_table_inv.png",
-  groups = {choppy=1, axey=1, handy=1, oddly_breakable_by_hand=1},
-  tiles = {"ward_blank.png"},
+  groups = {choppy=1, axey=1, handy=2, oddly_breakable_by_hand=1},
+  tiles = {"ward_chiping_table.png"},
   on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
     local witem = clicker:get_wielded_item()
     if witem:get_name() == gems.diamond.name and minetest.get_meta(pos):get_string("gem") == "" then
@@ -77,26 +88,6 @@ minetest.register_on_dignode(function(pos, oldnode, digger) -- remove table and 
   end
 end)
 
-minetest.register_entity("ward:chiping_table_entity", {
-	visual = "mesh",
-	mesh = "ward_chiping_table.obj",
-	visual_size = {x = 10, y = 10},
-  hp_max = 100,
-  pointable = false,
-	collisionbox = {-0.2, 0.6, -0.2, 0.2, 0.7, 0.2},
-	physical = false,
-  _is_ct = true,
-  on_activate = function(self, staticdata, dtime_s)
-    local pos = self.object:get_pos()
-    if bench_node and bench_node.name and bench_node.name ~= "ward:chiping_table" then
-      self.object:remove()
-      return
-    end
-  end,
-  textures = {"ward_chiping_table.png"},
-  --static_save = false,
-  damage_texture_modifier = "",
-})
 
 local function set_chipped_tex(luaentity, texture, gemeta)
   local chipped_texture = "[combine:16x16:0,0=blank:0,"..16-((16/luaentity.TOTALHITS)*gemeta[2]).."="..texture
@@ -205,10 +196,3 @@ minetest.register_entity("ward:chiping_table_item_entity", {
 
   end,
 })
-
-
-minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-  if newnode.name == "ward:chiping_table" then
-    minetest.add_entity(vector.add(pos, vector.new(0,0,0)), "ward:chiping_table_entity")
-  end
-end)
