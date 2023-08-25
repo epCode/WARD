@@ -164,8 +164,20 @@ minetest.register_entity("ward:chiping_table_item_entity", {
     else-- if the diamond didn't break
       local go_dir = puncher:get_look_dir() -- the direction the particles and the chip will fly when gem is struck
       local chip_types = {"med", "small", "tiny"}
-      local item = minetest.add_item(pos, ItemStack("ward:diamond_chip_"..chip_types[math.random(#chip_types)]))
-      item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
+      if mineclone then -- If we're playing Mineclone2 then add these chips as items: otherwise just add straight to inventory
+        local item = minetest.add_item(pos, ItemStack("ward:diamond_chip_"..chip_types[math.random(#chip_types)]))
+        item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
+      else
+        local inv = puncher:get_inventory()
+        if inv then
+          local item = inv:add_item("main", ItemStack("ward:diamond_chip_"..chip_types[math.random(#chip_types)]))
+          item = minetest.add_item(pos, item)
+          if item then
+            item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
+          end
+        end
+      end
+
       ward_func.object_particlespawn_effect(self.object, {
         amount = 4,
         time = 0.1,
