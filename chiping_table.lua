@@ -77,13 +77,9 @@ minetest.register_node("ward:chiping_table", {
 
 minetest.register_on_dignode(function(pos, oldnode, digger) -- remove table and gem when dug
   if oldnode.name ~= "ward:chiping_table" then return end
-  local table = get_ct_item(pos, true)
   local gem = get_ct_item(pos)
-  if table then
-
-    table:remove()
-  end
   if gem then
+    --minetest.chat_send_all("sawd")
     gem:remove()
   end
 end)
