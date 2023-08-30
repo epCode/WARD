@@ -52,9 +52,11 @@ ward_ui = {
 lol = {}
 
 ward.items = {
-  fire_item = minetest.registered_items["fire:flint_and_steel"],
-  stick = minetest.registered_items["default:stick"],
-  iron = minetest.registered_items["default:steel_ingot"],
+  fire_item = minetest.registered_items["air"],
+  stick = minetest.registered_items["air"],
+  iron = minetest.registered_items["air"],
+  lava = minetest.registered_items["air"],
+  wood = minetest.registered_items["air"],
 }
 
 
@@ -69,6 +71,7 @@ ward.items.fire_item =
 ward.items.stick =
   minetest.registered_items["default:stick"] or
   minetest.registered_items["mcl_core:stick"] or
+  minetest.registered_items["group:stick"] or
   ward.items.stick
 
 
@@ -80,7 +83,12 @@ ward.items.iron =
 ward.items.lava =
   minetest.registered_items["default:lava_source"] or
   minetest.registered_items["mcl_core:lava_source"] or
+  {name="group:lava"} or
   ward.items.lava
+
+ward.items.wood =
+  {name="group:wood"} or
+  ward.items.wood
 
 
 
