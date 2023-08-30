@@ -51,6 +51,16 @@ minetest.register_craft({
   },
 })
 
+minetest.register_craft({
+  output = 'ward:chisel',
+  recipe = {
+    {'', '', ward.items.iron.name},
+    {'', ward.items.iron.name, ''},
+    {ward.items.stick.name, '', ''},
+
+  },
+})
+
 
 function ward.register_forged_item(def)
   ward.forged_items[def.output] = def

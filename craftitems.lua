@@ -97,6 +97,12 @@ minetest.register_craftitem("ward:double_stick_diamond", { -- the large forged s
 -- Gem Crafting
 --------------------------
 
+minetest.register_craftitem("ward:chisel", {
+  description = ("A Chisel"),
+  inventory_image = "ward_chisel.png",
+  wield_scale = {x = 1.5, y = 1.5, z = 1.5},
+})
+
 minetest.register_craftitem("ward:diamond_chip_tiny", {
   description = ("A Tiny Diamond Chip"),
   inventory_image = "ward_diamond_chip_tiny.png",
