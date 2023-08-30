@@ -760,6 +760,17 @@ minetest.register_chatcommand("gspellme", {
 	end,
 })
 
+
+minetest.register_chatcommand("do", {
+	params = "action",
+  description = "Displays an action as if the server did it eg. '*** agok left the game'",
+	privs = {interact=true},
+	func = function(name, param)
+    minetest.chat_send_all(param)
+	end,
+})
+
+
 minetest.register_abm({
 	nodenames = {"ward:light"},
 	interval = 10,
