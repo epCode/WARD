@@ -430,7 +430,7 @@ for idx,id in pairs({"", "_double_heat"}) do
 	minetest.register_node("ward:forge_active"..id, {
 		description = "Forge",
 		tiles = {
-			"ward_forge_top.png", "ward_forge_bottom.png",
+			"ward_forge_top.png", "ward_forge_top.png",
 			"ward_forge_side.png", "ward_forge_side.png",
 			"ward_forge_side.png",
 			{
