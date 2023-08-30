@@ -20,15 +20,12 @@ luminum
 
 ward.forged_items = {}
 
-
-
-
 minetest.register_craft({
-  output = 'ward:basic_wand_1',
+  output = 'ward:chiping_table',
   recipe = {
-    {'', ward.items.fire_item.name, ''},
-    {ward.items.fire_item.name, ward.items.stick.name, ward.items.fire_item.name},
-    {ward.items.fire_item.name, ward.items.stick.name, ward.items.fire_item.name}
+    {ward.items.iron.name, "", ward.items.iron.name},
+    {ward.items.wood.name, ward.items.wood.name, ward.items.wood.name},
+    {ward.items.stick.name, "", ward.items.stick.name},
   },
 })
 
