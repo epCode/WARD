@@ -103,18 +103,15 @@ minetest.register_craftitem("ward:chisel", {
   wield_scale = {x = 1.5, y = 1.5, z = 1.5},
 })
 
-minetest.register_craftitem("ward:diamond_chip_tiny", {
-  description = ("A Tiny Diamond Chip"),
-  inventory_image = "ward_diamond_chip_tiny.png",
-  wield_scale = {x = 2, y = 2, z = 2},
-})
-minetest.register_craftitem("ward:diamond_chip_small", {
-  description = ("A Small Diamond Chip"),
-  inventory_image = "ward_diamond_chip_small.png",
-  wield_scale = {x = 2, y = 2, z = 2},
-})
-minetest.register_craftitem("ward:diamond_chip_med", {
-  description = ("A Medium Diamond Chip"),
-  inventory_image = "ward_diamond_chip_med.png",
-  wield_scale = {x = 2, y = 2, z = 2},
-})
+for _,size in ipairs({"tiny", "small", "med"}) do
+  minetest.register_craftitem("ward:diamond_chip_"..size, {
+    description = ("A Tiny Diamond Chip"),
+    inventory_image = "ward_diamond_chip_"..size..".png",
+    wield_scale = {x = 2, y = 2, z = 2},
+  })
+  minetest.register_craftitem("ward:diamond_chip_rough_"..size, {
+    description = ("A Tiny Diamond Chip"),
+    inventory_image = "ward_diamond_chip_rough_"..size..".png",
+    wield_scale = {x = 2, y = 2, z = 2},
+  })
+end

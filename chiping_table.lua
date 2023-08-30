@@ -74,7 +74,7 @@ minetest.register_node("ward:chiping_table", {
   end,
   _mcl_hardness = 1.5,
   is_ground_content = true,
-  groups = {axey=1, tree=1, flammable=2, building_block=1, material_wood=1, fire_encouragement=5, fire_flammability=5},
+  groups = {choppy=1, oddly_breakable_by_hand=1, axey=1, tree=1, flammable=2, building_block=1, material_wood=1, fire_encouragement=5, fire_flammability=5},
 })
 
 minetest.register_on_dignode(function(pos, oldnode, digger) -- remove table and gem when dug
@@ -154,12 +154,12 @@ minetest.register_entity("ward:chiping_table_item_entity", {
       local go_dir = puncher:get_look_dir() -- the direction the particles and the chip will fly when gem is struck
       local chip_types = {"med", "small", "tiny"}
       if mineclone then -- If we're playing Mineclone2 then add these chips as items: otherwise just add straight to inventory
-        local item = minetest.add_item(pos, ItemStack("ward:diamond_chip_"..chip_types[math.random(#chip_types)]))
+        local item = minetest.add_item(pos, ItemStack("ward:diamond_chip_rough_"..chip_types[math.random(#chip_types)]))
         item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
       else
         local inv = puncher:get_inventory()
         if inv then
-          local item = inv:add_item("main", ItemStack("ward:diamond_chip_"..chip_types[math.random(#chip_types)]))
+          local item = inv:add_item("main", ItemStack("ward:diamond_chip_rough_"..chip_types[math.random(#chip_types)]))
           item = minetest.add_item(pos, item)
           if item then
             item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
