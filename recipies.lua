@@ -90,3 +90,10 @@ ward.register_forged_item({
 	output = "ward:double_stick_reinforced",
 	recipe = {'ward:double_stick', ward.items.iron.name}
 })
+
+ward.register_forged_item({ --
+	cooktime = 32,
+  double_heat = true,
+	output = "ward:double_stick_diamond",
+	recipe = {'ward:double_stick_reinforced', "ward:diamond_chip_med"}
+})

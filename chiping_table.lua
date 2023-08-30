@@ -19,12 +19,7 @@ gems.diamond =
   minetest.registered_items["mcl_core:diamond"] or
   gems.diamond
 
-ward.register_forged_item({ --
-	cooktime = 32,
-  double_heat = true,
-	output = "ward:double_stick_diamond",
-	recipe = {'ward:double_stick_reinforced', "ward:diamond_chip_med"}
-})
+
 
 
 local function get_ct_item(pos)
