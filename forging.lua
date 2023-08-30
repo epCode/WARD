@@ -388,6 +388,8 @@ for idx,id in pairs({"", "_double_heat"}) do
 		},
 		paramtype2 = "facedir",
 		groups = {cracky=2, pickaxey=1, not_in_creative_inventory=nici},
+		_mcl_hardness = 1.5,
+		is_ground_content = true,
 		legacy_facedir_simple = true,
 		is_ground_content = false,
 
@@ -448,6 +450,8 @@ for idx,id in pairs({"", "_double_heat"}) do
 		light_source = 8,
 		drop = "ward:forge",
 		groups = {cracky=2, pickaxey=1, not_in_creative_inventory=1},
+		_mcl_hardness = 1.5,
+		is_ground_content = true,
 		legacy_facedir_simple = true,
 		is_ground_content = false,
 		on_timer = forge_node_timer,

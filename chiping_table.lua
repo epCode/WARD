@@ -59,7 +59,6 @@ minetest.register_node("ward:chiping_table", {
     fixed = nodebox,
   },]]
   inventory_image = "ward_chiping_table_inv.png",
-  groups = {choppy=1, axey=1, handy=2, oddly_breakable_by_hand=1},
   tiles = {"ward_chiping_table.png"},
   on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
     local witem = clicker:get_wielded_item()
@@ -72,7 +71,10 @@ minetest.register_node("ward:chiping_table", {
       minetest.get_meta(pos):set_string("gem", minetest.serialize(diamond))
       return itemstack
     end
-  end
+  end,
+  _mcl_hardness = 1.5,
+  is_ground_content = true,
+  groups = {axey=1, tree=1, flammable=2, building_block=1, material_wood=1, fire_encouragement=5, fire_flammability=5},
 })
 
 minetest.register_on_dignode(function(pos, oldnode, digger) -- remove table and gem when dug
