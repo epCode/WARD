@@ -114,4 +114,25 @@ for _,size in ipairs({"tiny", "small", "med"}) do
     inventory_image = "ward_diamond_chip_rough_"..size..".png",
     wield_scale = {x = 2, y = 2, z = 2},
   })
+  minetest.register_craft({
+  	type = "shapeless",
+  	output = "ward:diamond_chip_"..size,
+  	recipe = {"ward:diamond_chip_rough_"..size, "ward:chisel"},
+  })
 end
+
+minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
+	if string.find(itemstack:get_name(), "diamond_chip_") then
+		for i, stack in pairs(old_craft_grid) do
+			if stack:get_name() == "ward:chisel" then
+				stack:add_wear(65535/34)
+				craft_inv:set_stack("craft", i, stack)
+				break
+			end
+		end
+		if math.random(4) > 1 then
+			itemstack:take_item()
+			return itemstack
+		end
+	end
+end)

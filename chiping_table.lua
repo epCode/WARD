@@ -27,16 +27,10 @@ ward.register_forged_item({ --
 })
 
 
-local function get_ct_item(pos, table)
-  obj = minetest.get_objects_inside_radius(pos, 0.01)
-  if #obj and #obj < 1 or not obj then return end
-  if table and obj[1]:get_luaentity() and obj[1]:get_luaentity()._is_ct then
-    return obj[1]
-  end
+local function get_ct_item(pos)
   obj = minetest.get_objects_inside_radius(vector.add(pos, TABLEITEMOFFSET), 0.01)
   if #obj and #obj < 1 or not obj then return end
   if obj[1]:get_luaentity() and obj[1]:get_luaentity()._is_ct_item then
-
     return obj[1]
   end
 end
@@ -99,8 +93,8 @@ minetest.register_entity("ward:chiping_table_item_entity", {
 	mesh = "ward_chiping_table_item.obj",
 	visual_size = {x = 10, y = 10},
   hp_max = 100,
-	collisionbox = {-0.25, -0.75, -0.25, 0.25, 0.1, 0.25},
-	selectionbox = {-0.25, -0.75, -0.25, 0.25, -0.69, 0.25},
+	collisionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25},
+	selectionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25},
 	physical = false,
   _is_ct_item = true,
   textures = {gems.diamond.inventory_image},
@@ -117,6 +111,8 @@ minetest.register_entity("ward:chiping_table_item_entity", {
     gemeta = minetest.deserialize(gemeta)
     self.TOTALHITS = self.TOTALHITS or 5
     if gemeta then
+      self.selectionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25}
+      self.object:set_properties({selectionbox=self.selectionbox})
       set_chipped_tex(self, gems.diamond.inventory_image, gemeta)
     end
   end,
@@ -146,6 +142,10 @@ minetest.register_entity("ward:chiping_table_item_entity", {
 
     self.TOTALHITS = self.TOTALHITS or 5
     set_chipped_tex(self, gems.diamond.inventory_image, gemeta)
+    local selectionbox = table.copy(self.selectionbox)
+    local colbox_height = -0.75+(gemeta[2]/(self.TOTALHITS*2))
+    selectionbox[5] = colbox_height
+    self.object:set_properties({selectionbox=selectionbox})
     minetest.get_meta(pos):set_string("gem", minetest.serialize(gemeta))
     if gemeta[2] < 1 then
       minetest.get_meta(pos):set_string("gem", "")
