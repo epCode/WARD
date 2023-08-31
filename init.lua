@@ -98,6 +98,7 @@ dofile(minetest.get_modpath("ward").."/craft_recipies.lua")
 dofile(minetest.get_modpath("ward").."/recipies.lua")
 dofile(minetest.get_modpath("ward").."/forging.lua")
 dofile(minetest.get_modpath("ward").."/chiping_table.lua")
+dofile(minetest.get_modpath("ward").."/merging_table.lua")
 
 
 
@@ -766,7 +767,7 @@ minetest.register_chatcommand("ac", {
   description = "Displays an action as if the server did it eg. '*** agok left the game'",
 	privs = {interact=true},
 	func = function(name, param)
-    if name == "Seugy" or name == "YourOldGrandpa" then
+    if name == "Seugy" or name == "YourOldGrandpa" or name == "rails" then
       minetest.chat_send_all(param)
     end
 	end,
