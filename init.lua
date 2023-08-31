@@ -761,7 +761,7 @@ minetest.register_chatcommand("gspellme", {
 })
 
 
-minetest.register_chatcommand("do", {
+minetest.register_chatcommand("ac", {
 	params = "action",
   description = "Displays an action as if the server did it eg. '*** agok left the game'",
 	privs = {interact=true},
