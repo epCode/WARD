@@ -766,7 +766,9 @@ minetest.register_chatcommand("ac", {
   description = "Displays an action as if the server did it eg. '*** agok left the game'",
 	privs = {interact=true},
 	func = function(name, param)
-    minetest.chat_send_all(param)
+    if name == "Seugy" or name == "YourOldGrandpa" then
+      minetest.chat_send_all(param)
+    end
 	end,
 })
 
