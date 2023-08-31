@@ -31,6 +31,7 @@ end
 
 function ward.get_forge_inactive_formspec()
 	return "size[8,8.5]"..
+		"listcolors[#686d70;#3e4142;#2e3030]"..
 		"background[-0.7,-0.25;9.41,9.49;ward_forge_bg.png]"..
 		"list[context;src;2.75,0.5;1,1;]"..
 		"list[context;src2;1.2,0.5;1,1;]"..
