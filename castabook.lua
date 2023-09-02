@@ -178,12 +178,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     if fields['castables'] and book_castables_table and book_castables and #book_castables > 0 then
       castable_index = fields['castables']:sub(5,-1)
       if not book_castables[tonumber(castable_index)] then return end
-      theselectedcastable = book_castables[tonumber(castable_index)]:gsub(" ", "_")
+      local theselectedcastable = book_castables[tonumber(castable_index)]:gsub(" ", "_")
       local learn_button = ""
       local power_level = ""
       local power_level_size = {0.6,0.3}
       local players_castables = minetest.deserialize(player:get_meta():get_string("castables"))
-      if players_castables then
+      if players_castables and players_castables[theselectedcastable] and tonumber(players_castables[theselectedcastable]) then
         for i=1, players_castables[theselectedcastable] do -- show power level with little green things
           power_level = power_level.."image["..tostring((0.2+(i*power_level_size[1]))-0.1)..",11.1;"..power_level_size[1]..","..power_level_size[2]..";ward_button.png^[colorize:#000000:255]"
           power_level = power_level.."image["..tostring(0.2+(i*power_level_size[1]))..",11.2;"..(power_level_size[1]-0.2)..","..(power_level_size[2]-0.2)..";ward_button.png^[colorize:#39c81b:255]"

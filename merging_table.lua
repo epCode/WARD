@@ -14,7 +14,17 @@ local nodebox = {
   { -0.5 , 0.13 , -1.5 , 0.5 , 0.25 , 0.5}, -- top
 }
 
-
+minetest.register_node("ward:placeholder", {
+	description = "Why... Just why",
+	drawtype = "glasslike",
+	tiles = {"ward_blank.png"},
+	paramtype = "light",
+	sunlight_propagates = true,
+	is_ground_content = false,
+	groups = {not_in_creative_inventory = 1},
+  pointable = false,
+  walkable = false,
+})
 
 local function get_ct_item(pos)
   obj = minetest.get_objects_inside_radius(vector.add(pos, TABLEITEMOFFSET), 0.01)
@@ -37,25 +47,44 @@ minetest.register_node("ward:merging_table", {
     fixed = nodebox,
   },
   after_place_node = function(pos, placer, itemstack, pointed_thing)
-
+    --local pos = pointed_thing.above
+    local othernode = minetest.get_node(vector.add(pos, vector.new(0,0,-1)))
+    if not othernode or othernode.name == "air" or othernode.name == "ignore" or minetest.registered_nodes[othernode.name].buildable_to then
+      minetest.set_node(vector.add(pos, vector.new(0,0,-1)), {name="ward:placeholder"})
+    else
+      minetest.remove_node(pos)
+      return itemstack
+    end
   end,
-  --[[
-  node_box = {
-    type = "fixed",
-    fixed = nodebox,
-  },]]
+
   inventory_image = "ward_merging_table_inv.png",
   tiles = {"ward_merging_table.png"},
   on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-    local witem = clicker:get_wielded_item()
-    if witem:get_name() == gems.diamond.name and minetest.get_meta(pos):get_string("gem") == "" then
-      local obj = minetest.add_entity(vector.add(pos, TABLEITEMOFFSET), "ward:merging_table_item_entity")
-      local TOTALHITS = math.random(2, 7)
-      local diamond = {witem:get_name(), TOTALHITS}
-      obj:get_luaentity().TOTALHITS = TOTALHITS
-      itemstack:take_item()
-      minetest.get_meta(pos):set_string("gem", minetest.serialize(diamond))
-      return itemstack
+    local metadata = minetest.get_meta(pos)
+
+    if metadata:get_string("firestick") ~= "" and not string.find(metadata:get_string("firestick"), "_burn") then
+      if itemstack:get_name() == ward.items.fire_item.name then
+        minetest.chat_send_all(ward.items.fire_item.name)
+        metadata:set_string("firestick", metadata:get_string("firestick").."_burn")
+        local stick = get_ct_item(pos)
+        if stick then
+          stick:get_luaentity()._on_fire = 1
+        end
+      end
+    elseif metadata:get_string("firestick") == "" then
+      local witem = clicker:get_wielded_item()
+      if witem:get_name() == "ward:double_stick_diamond" then
+        local obj = minetest.add_entity(vector.add(pos, TABLEITEMOFFSET), "ward:merging_table_item_entity")
+        metadata:set_string("firestick", itemstack:get_name())
+        itemstack:take_item()
+        return itemstack
+      end
+    end
+  end,
+  after_dig_node = function(pos, oldnode, oldmetadata, digger)
+    local item = oldmetadata.fields["firestick"]
+    if item ~= "" then
+      minetest.add_item(pos, ItemStack(item))
     end
   end,
   _mcl_hardness = 1.5,
@@ -65,124 +94,55 @@ minetest.register_node("ward:merging_table", {
 
 minetest.register_on_dignode(function(pos, oldnode, digger) -- remove table and gem when dug
   if oldnode.name ~= "ward:merging_table" then return end
-  local gem = get_ct_item(pos)
-  if gem then
+
+  local stick = get_ct_item(pos)
+  if stick then
     --minetest.chat_send_all("sawd")
-    gem:remove()
+    stick:remove()
   end
+  minetest.remove_node(vector.add(pos, vector.new(0,0,-1)))
 end)
 
 
-local function set_chipped_tex(luaentity, texture, gemeta)
-  local chipped_texture = "[combine:16x16:0,0=blank:0,"..16-((16/luaentity.TOTALHITS)*gemeta[2]).."="..texture
-  luaentity.object:set_properties({
-    textures={texture=chipped_texture}
-  })
-end
+
 
 minetest.register_entity("ward:merging_table_item_entity", {
 	visual = "mesh",
 	mesh = "ward_merging_table_item.obj",
 	visual_size = {x = 10, y = 10},
   hp_max = 100,
-	collisionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25},
-	selectionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25},
+	collisionbox = {-0.15, -0.75, -1.25, 0.15, -0.65, 0.25},
+	selectionbox = {-0.15, -0.75, -1.25, 0.15, -0.65, 0.25},
 	physical = false,
   _is_ct_item = true,
-  --textures = {gems.diamond.inventory_image},
+  textures = {
+    minetest.registered_items["ward:double_stick_diamond"].inventory_image,
+    "ward_blank.png",
+  },
   --static_save = false,
   damage_texture_modifier = "",
-  on_activate = function(self, staticdata, dtime_s)
-    local pos = vector.add(self.object:get_pos(), vector.new(0,-1,0))
-    if bench_node and bench_node.name and bench_node.name ~= "ward:merging_table" then
-      self.object:remove()
-      return
-    end
-    local gemeta = minetest.get_meta(pos):get_string("gem")
-    local bench_node = minetest.get_node(pos)
-    gemeta = minetest.deserialize(gemeta)
-    self.TOTALHITS = self.TOTALHITS or 5
-    if gemeta then
-      self.selectionbox = {-0.25, -0.75, -0.25, 0.25, -0.25, 0.25}
-      self.object:set_properties({selectionbox=self.selectionbox})
-      set_chipped_tex(self, gems.diamond.inventory_image, gemeta)
-    end
-  end,
   _angular_vel = 0,
-  on_step = function(self)
-    if self._angular_vel > 0.1 then
-      --self.object:set_yaw(self.object:get_yaw()+self._angular_vel)
-      self.object:set_properties({automatic_rotate=(self._angular_vel*3)})
-      self._angular_vel = self._angular_vel / 2
-    elseif self._angular_vel ~= 0 then
-      self._angular_vel = 0
-      self.object:set_properties({automatic_rotate=0})
+  _on_fire = false,
+  _timer = 0,
+  on_activate = function(self)
+    local meta = minetest.get_meta(vector.subtract(pos, TABLEITEMOFFSET)):get_string("firestick")
+    self.textures[2] = "ward_blank.png"
+    self.object:set_properties({textures=self.textures})
+  end,
+  on_rightclick=function(self, clicker)
+
+  end,
+  on_step = function(self, dtime, moveresult)
+    if self._on_fire ~= false then
+      self._timer = self._timer+dtime
+      if self._timer > 0.25 then
+        self._timer = 0
+        self._on_fire = ((self._on_fire + 1)%5)+1
+        self.textures[2] = "firestick_3dburn."..self._on_fire..".png"
+        self.object:set_properties({textures=self.textures})
+      end
     end
   end,
   on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, direction, damage)
-    if not puncher then return true end
-    self.object:set_hp(100)
-    local pos = vector.add(self.object:get_pos(), vector.new(0,-1,0))
-    local witem = puncher:get_wielded_item()
-    if minetest.get_item_group(witem:get_name(), "axe") == 0 then return true end -- make sure a player is hitting the table with and axe
-    local gemeta = minetest.get_meta(pos):get_string("gem")
-    gemeta = minetest.deserialize(gemeta)
-    if not gemeta then return true end -- make sure there is a gem in the table to hit
-
-
-    gemeta[2] = gemeta[2]-1
-
-    self.TOTALHITS = self.TOTALHITS or 5
-    set_chipped_tex(self, gems.diamond.inventory_image, gemeta)
-    local selectionbox = table.copy(self.selectionbox)
-    local colbox_height = -0.75+(gemeta[2]/(self.TOTALHITS*2))
-    selectionbox[5] = colbox_height
-    self.object:set_properties({selectionbox=selectionbox})
-    minetest.get_meta(pos):set_string("gem", minetest.serialize(gemeta))
-    if gemeta[2] < 1 then
-      minetest.get_meta(pos):set_string("gem", "")
-      self.object:remove()
-    else-- if the diamond didn't break
-      local go_dir = puncher:get_look_dir() -- the direction the particles and the chip will fly when gem is struck
-      local chip_types = {"med", "small", "tiny"}
-      if mineclone then -- If we're playing Mineclone2 then add these chips as items: otherwise just add straight to inventory
-        local item = minetest.add_item(pos, ItemStack("ward:diamond_chip_rough_"..chip_types[math.random(#chip_types)]))
-        item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
-      else
-        local inv = puncher:get_inventory()
-        if inv then
-          local item = inv:add_item("main", ItemStack("ward:diamond_chip_rough_"..chip_types[math.random(#chip_types)]))
-          item = minetest.add_item(pos, item)
-          if item then
-            item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
-          end
-        end
-      end
-
-      ward_func.object_particlespawn_effect(self.object, {
-        amount = 4,
-        time = 0.1,
-        minsize = 0,
-        maxsize = 1,
-        minexptime = 0.2,
-        maxexptime = 1,
-        minacc = vector.new(0,-9,0),
-        maxacc = vector.new(0,-9,0),
-        minvel = vector.add(vector.multiply(go_dir, 2), vector.new(0,2,0)),
-        maxvel = vector.add(vector.multiply(go_dir, 6), vector.new(0,10,0)),
-        --maxvel = (vector.new(0,-200,0)),
-        collisiondetection = true,
-
-        texture = {
-          name = "ward_diamond_chip_small.png^[colorize:#a3ce63:210^ward_star_core.png",
-          scale_tween = {1.3, 0.1},
-          blend = "screen",
-        }
-      })
-
-      self._angular_vel = 10
-    end
-    return true
-
   end,
 })
