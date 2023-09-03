@@ -57,6 +57,8 @@ ward.items = {
   iron = minetest.registered_items["air"],
   lava = minetest.registered_items["air"],
   wood = minetest.registered_items["air"],
+  tree = minetest.registered_items["air"],
+  stone = minetest.registered_items["air"],
 }
 
 
@@ -89,6 +91,15 @@ ward.items.lava =
 ward.items.wood =
   {name="group:wood"} or
   ward.items.wood
+
+ward.items.tree =
+  {name="group:tree"} or
+  ward.items.tree
+
+ward.items.stone =
+  minetest.registered_items["mcl_deepslate:deepslate"] or
+  minetest.registered_items["default:stone"] or
+  ward.items.stone
 
 
 

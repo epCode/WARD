@@ -61,6 +61,15 @@ minetest.register_craft({
   },
 })
 
+minetest.register_craft({
+  output = 'ward:merging_table',
+  recipe = {
+    {ward.items.iron.name, ward.items.stone.name, ward.items.iron.name},
+    {ward.items.tree.name, ward.items.tree.name, ward.items.tree.name},
+    {ward.items.tree.name, "", ward.items.tree.name},
+  },
+})
+
 
 function ward.register_forged_item(def)
   ward.forged_items[def.output] = def
