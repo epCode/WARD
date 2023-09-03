@@ -155,9 +155,11 @@ minetest.register_entity("ward:chiping_table_item_entity", {
         local inv = puncher:get_inventory()
         if inv then
           local item = inv:add_item("main", ItemStack("ward:diamond_chip_rough_"..chip_types[math.random(#chip_types)]))
-          item = minetest.add_item(pos, item)
           if item then
-            item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
+            item = minetest.add_item(pos, item)
+            if item then
+              item:set_velocity(vector.add(vector.multiply(go_dir, math.random(2, 7)), vector.new(math.random(-20, 20)/10,math.random(3, 10),math.random(-20, 20)/10)))
+            end
           end
         end
       end
